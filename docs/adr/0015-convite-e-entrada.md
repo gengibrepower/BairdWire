@@ -32,5 +32,5 @@ No v0.1 o cliente web é servido pelo próprio nó. Quem controla o domínio ou 
 - Os tokens não aparecem em logs do Caddy nem em histórico de proxies. Um vazamento do banco não expõe convites ativos.
 - A versão do cliente sempre corresponde à do nó.
 - A confiança no nó, no v0.1, é a confiança no TLS e no domínio dele. A chave do nó (pinning e assinatura) volta quando houver cliente fora do nó (app desktop, v0.2) ou federação (P8).
-- A tela de entrada é o lugar natural para a declaração de idade e o aceite dos termos do host, a definir no bloco 4.6 (P9).
+- A tela de entrada recebe a declaração de idade e o aceite dos termos do host (ADRs 0023 e 0024).
 - Fica mais difícil: o link de setup é um ponto sensível. Se vazar antes do uso, outra pessoa vira dona. Ele precisa de validade curta e só pode aparecer no terminal do host.

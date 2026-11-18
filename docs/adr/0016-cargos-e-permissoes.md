@@ -42,5 +42,5 @@ Três cargos fixos:
 - Um admin não consegue escalar privilégio tomando a conta de outro admin ou do dono.
 - Um removido pode voltar com um novo convite, como uma conta nova. O controle real está em quem pode convidar.
 - Ficam fora do v0.1: cargos customizados, permissões por canal, canais privados, cargo de moderador e ban por identidade.
-- O destino das mensagens de membros removidos é definido no bloco 4.4.
+- As mensagens de membros removidos têm a autoria anonimizada (ADR 0019).
 - Fica mais difícil: comunidades que precisam de canais privados ou de moderação em camadas não são atendidas.

@@ -27,5 +27,5 @@ Na mesma discussão surgiu se Go (`crypto/tls`, `autocert`, Pion) não resolveri
 - O host precisa de um domínio. A documentação deve citar opções gratuitas de subdomínio.
 - Testar a rede da faculdade (P6) decide se a opção B vira trabalho do v0.1.
 - O nó não tem código de TLS no v0.1. O DTLS da mídia continua na `libdatachannel`.
-- O nó confia no proxy local para o IP do cliente (cabeçalho `X-Forwarded-For`). Isso precisa entrar no threat model (4.5).
+- O nó só aceita o cabeçalho `X-Forwarded-For` em conexões vindas do proxy local. Vindo de qualquer outra origem, o cabeçalho é ignorado.
 - Fica mais difícil: o "binário único" deixa de ser autossuficiente no v0.1, porque depende do Caddy.

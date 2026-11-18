@@ -27,6 +27,6 @@ Mudar a mídia (entrar alguém, começar a compartilhar a tela) exige renegociar
 - Não há glare por construção, e o nó não precisa de rollback de SDP.
 - O signaling do nó tem duas máquinas de offer/answer simples em vez de uma complexa.
 - A tela sob demanda reduz o upload real do nó em relação às estimativas do ADR 0004, que supunham todos assistindo.
-- O token de sessão precisa de validade curta e ficar amarrado à identidade (blocos 4.3 e 4.5).
+- O token de sessão precisa de validade curta e ficar amarrado à identidade (ADRs 0014 e 0021).
 - O detalhe das mensagens vai para `docs/protocolo.md` na implementação.
 - Fica mais difícil: são dois handshakes por entrada e dois objetos de conexão para gerenciar no cliente e no nó.

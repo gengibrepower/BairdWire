@@ -32,6 +32,6 @@ Não há servidor de e-mail, e o nó não deve depender de um.
 - Cada dispositivo já tem a chave de que o MLS vai precisar.
 - Caminho futuro: a conta pode passar a ser assinada por uma chave-raiz do usuário (identidade portátil, opção B) sem migrar a base.
 - Limpar os dados do navegador desloga aquele dispositivo. Se era o único, o usuário depende do admin. A interface precisa deixar isso claro e incentivar vincular um segundo dispositivo.
-- Admin comprometido ou malicioso consegue gerar recuperação para qualquer conta e se passar por ela. Isso vai para o threat model (4.5) e é um motivo para registrar em auditoria quem gerou cada link.
+- Admin comprometido ou malicioso consegue gerar recuperação para qualquer conta e se passar por ela. Mitigado pela recuperação hierárquica, pela auditoria (ADR 0016) e pelo aviso ao titular (S6, ADR 0021).
 - WebAuthn fica como método de login adicional possível depois.
 - Fica mais difícil: o fluxo de vinculação de dispositivos é UX nova para os usuários, e não há "esqueci a senha" self-service.

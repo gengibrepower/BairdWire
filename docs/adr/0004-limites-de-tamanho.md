@@ -23,5 +23,5 @@ O grupo real tem de 4 a 5 pessoas, e o máximo que já entrou numa chamada foi 6
 
 - Os testes de rede e de carga precisam cobrir 10 participantes simultâneos com uma tela compartilhada em cada perfil.
 - A documentação do host informa o upload necessário. O PC de casa só é recomendado com bitrate limitado.
-- O mesh P2P puro não comporta esse limite com tela, então o SFU é obrigatório para a tela (detalhes no bloco 4.2).
+- O mesh P2P puro não comporta esse limite com tela, então o SFU é obrigatório para a tela (ADRs 0007 e 0008).
 - Fica mais difícil: rodar o nó em conexões domésticas fracas no cenário máximo.

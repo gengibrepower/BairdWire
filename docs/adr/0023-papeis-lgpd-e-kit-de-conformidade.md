@@ -32,7 +32,7 @@ O art. 4º, I exclui da LGPD o tratamento feito por pessoa natural para fins exc
 **Kit de conformidade no v0.1:**
 - **K1.** Página "Seus dados neste nó", gerada a partir da configuração real (retenções, dados guardados, visibilidade do host do ADR 0022), com campos que o host preenche (controlador, contato, finalidade).
 - **K2.** Modelos de termos de uso e de política de privacidade em português, marcados como modelo e não como aconselhamento jurídico. Base legal sugerida: execução de contrato (art. 7º, V). O host pode alterar.
-- **K3.** Aceite dos termos na entrada (com a declaração de idade da decisão sobre o ECA Digital).
+- **K3.** Aceite dos termos na entrada (com a declaração de idade do ADR 0024).
 - **K4.** Ferramentas de direitos do titular (ADR 0019).
 - **K5.** `bairdwire compliance report`: registro das operações de tratamento (art. 37) gerado a partir da configuração.
 - **K6.** Apoio a incidentes (art. 48): comando para enviar um aviso a todos os membros e checklist com prazos e o que comunicar à ANPD.

@@ -19,11 +19,11 @@ O art. 18 da LGPD garante ao titular confirmação, acesso, correção, elimina�
 - **Correção:** editar o nome de exibição e as próprias mensagens.
 - **Exclusão da própria conta, opção C:** o titular escolhe entre anonimizar as mensagens (padrão, autor `NULL`, exibido como "ex-membro") e apagar também todas as mensagens e imagens. A interface avisa que mensagens anonimizadas podem continuar identificando o autor pelo conteúdo.
 - **Membro removido por admin:** os dispositivos são revogados e a autoria é anonimizada. A conta fica 30 dias no estado `removido` e depois é apagada. Nesse prazo, e para qualquer pedido de titular que chegue pelo contato do host, existem os comandos `bairdwire export --member <id>` e `bairdwire purge --member <id>`.
-- **Transparência:** a página "Seus dados neste nó" (conteúdo definido no 4.6) informa as retenções, que os backups mantêm dados até serem rotacionados, e que cópias ou prints feitos por outros membros estão fora do controle do nó.
+- **Transparência:** a página "Seus dados neste nó" (K1, ADR 0023) informa as retenções, que os backups mantêm dados até serem rotacionados, e que cópias ou prints feitos por outros membros estão fora do controle do nó.
 
 ## Consequências
 
 - O formato de `dados.json` é um contrato público e versionado.
 - O estado `removido` exige um job de expiração (ADR 0017).
-- O host precisa de um canal de contato para os titulares, a definir no 4.6.
+- O host precisa de um canal de contato para os titulares (K1, ADR 0023).
 - Fica mais difícil: garantir a eliminação completa, por causa de backups, cópias nos clientes e conteúdo de terceiros que menciona o titular.

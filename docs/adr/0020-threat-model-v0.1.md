@@ -38,7 +38,7 @@ Cada ameaça foi classificada como **dentro** (com defesa no v0.1) ou **fora** (
 
 ## Consequências
 
-- O build de produção é `ReleaseSafe`, e o fuzzing dos parsers faz parte da estratégia de testes (4.8).
+- O build de produção é `ReleaseSafe`, e o fuzzing dos parsers faz parte da estratégia de testes (ADR 0031).
 - O renderizador de Markdown e o CSP são requisitos de segurança, não detalhe de UI.
 - O aviso sobre o host é parte obrigatória da interface e da página "Seus dados neste nó".
 - O E2EE é a evolução natural para reduzir os riscos que ficaram fora.

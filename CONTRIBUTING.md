@@ -5,7 +5,7 @@ Valeu pelo interesse! O projeto está no começo, então ainda não tem código 
 ## Antes de mandar código
 
 - **Discuta antes numa issue.** Mudanças de arquitetura ou de escopo precisam de um ADR (`docs/adr/`).
-- **CLA:** contribuições externas exigem a assinatura de um [Contributor License Agreement](CLA.md). Ele ainda está em rascunho e a coleta automatizada ainda não está ativa, então **PRs externos com código ficam em espera** até isso ficar pronto. O motivo está explicado no [GOVERNANCE](GOVERNANCE.md).
+- **Por enquanto não aceito PRs de código de fora.** Quando abrir, contribuições externas vão exigir um CLA de licença. O porquê está no [GOVERNANCE](GOVERNANCE.md).
 
 ## Fluxo
 

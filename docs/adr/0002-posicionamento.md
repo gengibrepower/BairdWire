@@ -25,5 +25,5 @@ Surgiu a dúvida se o produto deveria ser focado em devs, "estilo Slack descentr
 - O chat ganha blocos de código com syntax highlight e Markdown como itens do núcleo.
 - Ficam fora do foco: threads, busca avançada, integrações e webhooks, workspaces grandes e SSO institucional.
 - Linux e Windows são plataformas de primeira classe para o cliente.
-- O nó não deve competir com o jogo pelo upload. Isso pesa na decisão de onde o nó roda (bloco 4.2).
+- O nó não deve competir com o jogo pelo upload. Por isso o nó roda numa VPS, não no PC de quem joga (ADRs 0007 e 0009).
 - Fica mais difícil: atrair usuários fora do nicho dev e estudo e usar o produto como ferramenta de trabalho assíncrono.

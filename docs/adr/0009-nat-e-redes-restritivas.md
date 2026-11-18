@@ -26,7 +26,7 @@ No Brasil, CGNAT é comum em conexões domésticas e móveis, e com ele não dá
 ## Consequências
 
 - O critério de pronto ganha o item "funciona a partir da rede da faculdade" (ADR 0006).
-- É preciso verificar se a `libdatachannel` com `libjuice` suporta ICE-TCP do lado do servidor, ou se é preciso usar `libnice` ou outra solução (P5, bloco 4.8).
+- É preciso verificar se a `libdatachannel` com `libjuice` suporta ICE-TCP do lado do servidor, ou se é preciso usar `libnice` ou outra solução (P5, verificado no M0).
 - O firewall do host fica simples: uma porta UDP e as portas TCP do nó.
 - A documentação do host explica o CGNAT e como saber se a conexão está atrás de um.
 - Fica mais difícil: hospedar em casa com operadoras que usam CGNAT. Por TCP, a qualidade da mídia degrada mais quando há perda de pacotes (*head-of-line blocking*).

@@ -1,7 +1,5 @@
 # Escopo do v0.1 — BairdWire
 
-> Documento vivo durante a sessão de definição de escopo. Seções marcadas *(pendente)* ainda não foram decididas.
-
 ## Objetivo
 
 Voz, tela e chat para grupos pequenos que trabalham e jogam juntos, com foco em quem programa (ADR 0002). O v0.1 serve ao grupo do autor, universitários e devs, e substitui o Discord em sessões de pair programming, reuniões de projeto e jogo.

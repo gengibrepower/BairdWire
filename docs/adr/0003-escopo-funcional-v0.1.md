@@ -35,6 +35,6 @@ Restrição técnica relevante: a maior parte do grupo usa Linux. No Linux, o na
 
 - O critério de pronto tem que aceitar explicitamente o compartilhamento de gameplay sem o áudio do jogo no Linux.
 - O contorno (sink virtual do PipeWire exposto como entrada de microfone) precisa ser testado e documentado.
-- As imagens trazem para o v0.1: armazenamento em disco no nó, cota, política de retenção, exclusão a pedido do titular (LGPD), remoção pela moderação e o risco de conteúdo ilegal no disco do host. Isso tem que entrar no modelo de dados (4.4), no threat model (4.5) e na conformidade (4.6).
+- As imagens trazem para o v0.1: armazenamento em disco no nó, cota, política de retenção, exclusão a pedido do titular (LGPD), remoção pela moderação e o risco de conteúdo ilegal no disco do host. Isso é tratado nos ADRs 0017 (retenção e cota), 0020 (threat model) e 0024 (denúncia e moderação).
 - A captura nativa via PipeWire vira o marco principal do v0.2 e um arco da série.
 - Fica mais difícil: convencer quem compartilha gameplay no Linux, que continua dependendo de outro app para o áudio.

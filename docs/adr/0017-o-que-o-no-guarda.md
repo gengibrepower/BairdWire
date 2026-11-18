@@ -27,7 +27,7 @@ Os princípios de necessidade e de minimização da LGPD (art. 6º) pedem que s�
 | Auditoria de ações administrativas | **180 dias** |
 | Mídia de voz e tela | **Nunca guardada** |
 | Histórico de chamadas | **Não guardado**: a presença fica só em memória |
-| Endereços IP | **Não guardados por padrão**: rate limiting só em memória, log de acesso do Caddy desligado ou anonimizado no `Caddyfile` padrão. Registro de logs opcional para hosts que precisem (bloco 4.6) |
+| Endereços IP | **Não guardados por padrão**: rate limiting só em memória, log de acesso do Caddy desligado ou anonimizado no `Caddyfile` padrão. Registro de logs opcional para hosts que precisem (ADR 0023) |
 
 - **Hard delete:** apagar uma mensagem remove a linha. Editar sobrescreve, sem histórico. SQLite com `PRAGMA secure_delete = ON`.
 - **Armazenamento:** um único diretório de dados com `bairdwire.db` (SQLite em modo WAL) e `media/` (um arquivo por imagem, nomeado por id aleatório, sem deduplicação).
