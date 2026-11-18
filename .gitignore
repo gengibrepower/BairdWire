@@ -1,0 +1,16 @@
+.zig-cache/
+zig-cache/
+zig-out/
+node_modules/
+dist/
+.svelte-kit/
+coverage/
+playwright-report/
+test-results/
+*.db
+*.db-wal
+*.db-shm
+.env
+.env.*
+!.env.example
+.DS_Store
