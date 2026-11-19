@@ -20,7 +20,24 @@ defaults:
     working-directory: node
 
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      run: ${{ steps.changed.outputs.run }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - id: changed
+        working-directory: .
+        run: .github/scripts/changed.sh '^(node/|\.zig-version$|mise\.toml$|\.github/workflows/node\.yml$|\.github/scripts/)'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+
   fmt:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -32,6 +49,8 @@ jobs:
       - run: zig fmt --check build.zig build src
 
   test:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -55,6 +74,8 @@ jobs:
       - run: zig build test -Dtarget=${{ matrix.target }} -Drelease --summary all
 
   release:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -75,3 +96,15 @@ jobs:
           key: zig-${{ runner.os }}-release-${{ matrix.target }}-${{ hashFiles('.zig-version', 'node/build.zig.zon') }}
           restore-keys: zig-${{ runner.os }}-release-${{ matrix.target }}-
       - run: zig build -Dtarget=${{ matrix.target }} -Drelease
+
+  node-ok:
+    if: always()
+    needs: [changes, fmt, test, release]
+    runs-on: ubuntu-24.04
+    steps:
+      - working-directory: .
+        run: |
+          echo "$RESULTS"
+          if echo "$RESULTS" | grep -q -E 'failure|cancelled'; then exit 1; fi
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
