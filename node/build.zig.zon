@@ -3,8 +3,14 @@
     .version = "0.1.0",
     .fingerprint = 0x2d948ff1cdd10164,
     .minimum_zig_version = "0.17.1",
-    .dependencies = .{},
+    .dependencies = .{
+        .mbedtls = .{
+            .url = "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/mbedtls-3.6.8.tar.gz",
+            .hash = "N-V-__8AAJiVmgK8m52FlgB-3nQfNv4JiOPOA4rdnbtfFuq8",
+        },
+    },
     .paths = .{
+        "build",
         "build.zig",
         "build.zig.zon",
         "src",
