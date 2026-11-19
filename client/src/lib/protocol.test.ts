@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { encodeHello, isSessionError, isWelcome, parseEnvelope } from "./protocol";
+import {
+  encodeHello,
+  encodeRtcAnswer,
+  encodeRtcCandidate,
+  encodeRtcOffer,
+  isRtcDescription,
+  isSessionError,
+  isWelcome,
+  parseEnvelope,
+} from "./protocol";
 
 describe("encodeHello", () => {
   it("segue o formato congelado do ADR 0035", () => {
@@ -47,5 +56,42 @@ describe("guards", () => {
   it("isSessionError exige o code", () => {
     expect(isSessionError({ code: "hello_timeout" })).toBe(true);
     expect(isSessionError({ supported: [1] })).toBe(false);
+  });
+});
+
+describe("mensagens rtc", () => {
+  it("rtc.offer sai sempre no publish, com id", () => {
+    expect(JSON.parse(encodeRtcOffer("o1", "v=0"))).toEqual({
+      v: 1,
+      t: "rtc.offer",
+      id: "o1",
+      d: { pc: "publish", sdp: "v=0" },
+    });
+  });
+
+  it("rtc.answer sai sempre no subscribe, com re", () => {
+    expect(JSON.parse(encodeRtcAnswer("subscribe-2", "v=0"))).toEqual({
+      v: 1,
+      t: "rtc.answer",
+      re: "subscribe-2",
+      d: { pc: "subscribe", sdp: "v=0" },
+    });
+  });
+
+  it("rtc.candidate leva pc, candidate e mid", () => {
+    expect(
+      JSON.parse(encodeRtcCandidate({ pc: "publish", candidate: "candidate:1", mid: "0" })),
+    ).toEqual({
+      v: 1,
+      t: "rtc.candidate",
+      d: { pc: "publish", candidate: "candidate:1", mid: "0" },
+    });
+  });
+
+  it("isRtcDescription exige pc conhecido e sdp não vazio", () => {
+    expect(isRtcDescription({ pc: "subscribe", sdp: "v=0" })).toBe(true);
+    expect(isRtcDescription({ pc: "outro", sdp: "v=0" })).toBe(false);
+    expect(isRtcDescription({ pc: "publish", sdp: "" })).toBe(false);
+    expect(isRtcDescription({ pc: "publish" })).toBe(false);
   });
 });

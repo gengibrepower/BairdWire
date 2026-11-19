@@ -60,3 +60,45 @@ export const isWelcome = (d: unknown): d is Welcome =>
 
 export const isSessionError = (d: unknown): d is SessionError =>
   isObject(d) && typeof d.code === "string";
+
+export type PeerRole = "publish" | "subscribe";
+
+export interface RtcDescription {
+  pc: PeerRole;
+  sdp: string;
+}
+
+export interface RtcCandidate {
+  pc: PeerRole;
+  candidate: string;
+  mid: string;
+}
+
+export const encodeRtcOffer = (id: string, sdp: string): string =>
+  JSON.stringify({
+    v: protocolVersion,
+    t: "rtc.offer",
+    id,
+    d: { pc: "publish", sdp },
+  } satisfies Envelope<RtcDescription>);
+
+export const encodeRtcAnswer = (re: string, sdp: string): string =>
+  JSON.stringify({
+    v: protocolVersion,
+    t: "rtc.answer",
+    re,
+    d: { pc: "subscribe", sdp },
+  } satisfies Envelope<RtcDescription>);
+
+export const encodeRtcCandidate = (candidate: RtcCandidate): string =>
+  JSON.stringify({
+    v: protocolVersion,
+    t: "rtc.candidate",
+    d: candidate,
+  } satisfies Envelope<RtcCandidate>);
+
+export const isRtcDescription = (d: unknown): d is RtcDescription =>
+  isObject(d) &&
+  (d.pc === "publish" || d.pc === "subscribe") &&
+  typeof d.sdp === "string" &&
+  d.sdp.length > 0;
