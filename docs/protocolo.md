@@ -43,11 +43,13 @@ O formato de `session.hello`, `session.welcome` e `session.error` é **congelado
 
 A primeira mensagem da conexão. Qualquer outra primeira mensagem é um erro de protocolo.
 
-| Campo de `d` | Tipo | Significado |
-|---|---|---|
-| `versions` | array de inteiros, não vazio | As versões que o cliente fala |
-| `client` | string, até 64 bytes | Identificação do cliente, como `web/0.1.0`. Só para diagnóstico |
-| `resume` | string ou `null` | Token de retomada da sessão anterior (ADR 0012). `null` numa conexão nova |
+O envelope do `session.hello` precisa ter `id`.
+
+| Campo de `d` | Tipo | Obrigatório | Significado |
+|---|---|---|---|
+| `versions` | array de inteiros positivos, não vazio | sim | As versões que o cliente fala |
+| `client` | string, até 64 bytes | não | Identificação do cliente, como `web/0.1.0`. Só para diagnóstico |
+| `resume` | string de até 256 bytes, ou `null` | não | Token de retomada da sessão anterior (ADR 0012). Ausente ou `null` numa conexão nova |
 
 ```json
 { "v": 1, "t": "session.hello", "id": "1", "d": { "versions": [1], "client": "web/0.1.0", "resume": null } }
@@ -90,3 +92,6 @@ Um erro. Quando o erro encerra a conexão, o nó envia esta mensagem e em seguid
 | `version_incompatible` | 4001 | Nenhuma versão em comum |
 | `hello_timeout` | 4002 | O `session.hello` não chegou em 5 s |
 | `message_too_large` | 1009 | Mensagem acima do limite |
+| `unknown_type` | — (não fecha) | Depois do `session.welcome`, um `t` que o nó não conhece |
+
+Campos desconhecidos no envelope são ignorados, para que campos opcionais novos não quebrem nós antigos. Chaves duplicadas num mesmo objeto são `protocol_error`.
