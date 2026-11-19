@@ -15,5 +15,5 @@
     "skipLibCheck": true,
     "types": ["svelte", "vite/client"]
   },
-  "include": ["src", "csp.ts", "vite.config.ts"]
+  "include": ["src", "csp.ts", "csp.test.ts", "vite.config.ts"]
 }
