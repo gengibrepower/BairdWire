@@ -1,0 +1,11 @@
+.git
+**/node_modules
+**/dist
+**/.zig-cache
+**/zig-out
+**/zig-pkg
+**/coverage
+**/playwright-report
+**/test-results
+**/.env
+**/.env.*

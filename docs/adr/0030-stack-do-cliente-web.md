@@ -34,3 +34,11 @@ Restrições já decididas: CSP rígido sem `unsafe-inline` nem `eval` (ADRs 002
 - Os componentes copiados do shadcn-svelte são código do projeto: o projeto tem controle total, e também é responsável pela manutenção.
 - O build estático é o mesmo artefato servido pelo nó e embutido no desktop.
 - Fica mais difícil: usar libs de UI que dependem de CSS-in-JS ou de estilos inline, e usar o Shiki.
+
+## Adendo (2026-11-19): o Caddy serve o cliente até a fase 2
+
+O nó só fala WebSocket até a fase 2, quando ganha HTTP com o `http.zig` (adendo do ADR 0034). Até lá:
+
+- **O Caddy serve o build estático do cliente** (`file_server`, com fallback para o `index.html`), numa imagem própria com o `dist/` dentro.
+- As imagens do nó e do Caddy saem do mesmo `Dockerfile`, a partir do mesmo commit, para que o cliente e o nó estejam sempre na mesma versão.
+- **Na fase 2, os arquivos passam para o nó**, como diz a decisão acima, e o Caddy volta a só terminar o TLS (ADR 0010).
