@@ -16,6 +16,10 @@
             .url = "https://github.com/cisco/libsrtp/archive/24b3bf8f19b6f5ab4cd2bcceb4f4064efca86fd5.tar.gz",
             .hash = "N-V-__8AAGyiJwCjla9gs0OUHKaxMFn3Snt_MSktRorGOX-L",
         },
+        .usrsctp = .{
+            .url = "https://github.com/paullouisageneau/usrsctp/archive/fec583d54493f879d2ae44a743423bf8a04371ab.tar.gz",
+            .hash = "N-V-__8AALAGWACeA2U3iSwHwHdWNrq6RB1I8N80fRDQYjrw",
+        },
     },
     .paths = .{
         "build",

@@ -2,6 +2,7 @@ const std = @import("std");
 const mbedtls = @import("build/mbedtls.zig");
 const libjuice = @import("build/libjuice.zig");
 const libsrtp = @import("build/libsrtp.zig");
+const usrsctp = @import("build/usrsctp.zig");
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
@@ -43,6 +44,7 @@ pub fn build(b: *std.Build) void {
     });
     smoke.add("libjuice", libjuice.build(b, target, optimize), &.{});
     smoke.add("libsrtp", libsrtp.build(b, target, optimize, mbedtls_lib), &.{});
+    smoke.add("usrsctp", usrsctp.build(b, target, optimize), &.{});
 }
 
 const Smoke = struct {
