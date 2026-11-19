@@ -12,6 +12,10 @@
             .url = "https://github.com/paullouisageneau/libjuice/archive/b89c792e3612faf2f12cf35bcc56857313a06be3.tar.gz",
             .hash = "N-V-__8AAB1oCADtUFeRxdCYQdecv0OSYjlKIfD-86Bh5JuF",
         },
+        .libsrtp = .{
+            .url = "https://github.com/cisco/libsrtp/archive/24b3bf8f19b6f5ab4cd2bcceb4f4064efca86fd5.tar.gz",
+            .hash = "N-V-__8AAGyiJwCjla9gs0OUHKaxMFn3Snt_MSktRorGOX-L",
+        },
     },
     .paths = .{
         "build",

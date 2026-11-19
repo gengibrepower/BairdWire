@@ -1,6 +1,7 @@
 const std = @import("std");
 const mbedtls = @import("build/mbedtls.zig");
 const libjuice = @import("build/libjuice.zig");
+const libsrtp = @import("build/libsrtp.zig");
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
@@ -36,10 +37,12 @@ pub fn build(b: *std.Build) void {
     test_step.dependOn(&b.addRunArtifact(b.addTest(.{ .root_module = exe.root_module })).step);
 
     const smoke: Smoke = .{ .b = b, .step = test_step, .target = target, .optimize = optimize };
-    smoke.add("mbedtls", mbedtls.build(b, target, optimize), &.{
+    const mbedtls_lib = mbedtls.build(b, target, optimize);
+    smoke.add("mbedtls", mbedtls_lib, &.{
         .{ "MBEDTLS_USER_CONFIG_FILE", "\"" ++ mbedtls.config_header ++ "\"" },
     });
     smoke.add("libjuice", libjuice.build(b, target, optimize), &.{});
+    smoke.add("libsrtp", libsrtp.build(b, target, optimize, mbedtls_lib), &.{});
 }
 
 const Smoke = struct {

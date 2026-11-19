@@ -8,6 +8,11 @@ pub fn configure(b: *std.Build, module: *std.Build.Module, upstream: *std.Build.
     module.addCMacro("MBEDTLS_USER_CONFIG_FILE", "\"" ++ config_header ++ "\"");
 }
 
+pub fn link(module: *std.Build.Module, lib: *std.Build.Step.Compile) void {
+    module.linkLibrary(lib);
+    module.addCMacro("MBEDTLS_USER_CONFIG_FILE", "\"" ++ config_header ++ "\"");
+}
+
 pub fn build(
     b: *std.Build,
     target: std.Build.ResolvedTarget,
