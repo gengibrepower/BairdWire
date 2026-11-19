@@ -29,8 +29,8 @@
             .hash = "N-V-__8AAH7wNwObI9EjtWHx-gKAmR5w9n6GoPvQFTAtlm1v",
         },
         .websocket = .{
-            .url = "https://github.com/gengibrepower/websocket.zig/archive/bcda16bb4fba6d377930d6356ce3fc4af71c9319.tar.gz",
-            .hash = "websocket-0.1.0-ZPISdRgkBQAm5A2U6MTxYoQyl-Em8osMzpdHrFJENwIC",
+            .url = "https://github.com/gengibrepower/websocket.zig/archive/f8622364288b522a4420df37e6665882122b9c73.tar.gz",
+            .hash = "websocket-0.1.0-ZPISdeYkBQD5QlXyjeoj7P5y0PzPvTM9NVsxfN5dYCA9",
         },
     },
     .paths = .{

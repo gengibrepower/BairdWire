@@ -59,13 +59,14 @@ O `http.zig` fixa o `websocket.zig` num commit de 2026-10-04, anterior à corre�
 
 ## Adendo (2026-11-19): fork do `websocket.zig` com a correção do encerramento
 
-O `105eed7` tem dois bugs ao parar o servidor no modo nonblocking (Linux), que derrubavam ou travavam os testes de integração em cerca de 1 rodada a cada 5 em ReleaseSafe:
+O `105eed7` tem três bugs ao parar o servidor no modo nonblocking (Linux), que derrubavam ou travavam os testes de integração em cerca de 1 rodada a cada 5 em ReleaseSafe:
 
 - **Use-after-free:** o `deinit` do worker liberava as conexões antes de esvaziar o pool de threads, e um job pendente rodava sobre a memória já liberada (`panic: switch on corrupt value`).
 - **Sinal perdido:** o `stop()` esperava a condição sem predicado, e o `listen()` sinalizava sem segurar o mutex. Se o sinal caísse entre os dois, o `stop()` travava para sempre.
+- **Socket fechado sob um job pendente:** o shutdown fechava os sockets antes de esvaziar o pool, e um handshake na fila escrevia no descritor já fechado (EBADF, panic em Debug), cujo número podia já pertencer a outro arquivo.
 
 Decisão:
 
-- O `websocket.zig` passa a vir do **fork `gengibrepower/websocket.zig`, fixado no `bcda16b`**: o `105eed7` mais a correção, com um teste de regressão. A correção foi proposta no upstream na [PR #117](https://github.com/karlseguin/websocket.zig/pull/117).
+- O `websocket.zig` passa a vir do **fork `gengibrepower/websocket.zig`, fixado no `f862236`**: o `105eed7` mais dois commits de correção, com um teste de regressão. A correção foi proposta no upstream na [PR #117](https://github.com/karlseguin/websocket.zig/pull/117).
 - **Voltar para o upstream** assim que ele publicar a correção (ou uma equivalente), apagando o fork.
-- O nó ganhou um teste de regressão próprio: parar o runtime 50 vezes no meio de um handshake. Sem a correção, ele falha em 9 de 10 rodadas em ReleaseSafe.
+- O nó ganhou um teste de regressão próprio: parar o runtime 50 vezes no meio de um handshake. Contra o upstream sem correção, ele falha em 9 de 10 rodadas em ReleaseSafe. Só com o primeiro commit da correção, falha em 10 de 10 em Debug. Com os dois, passa em 10 de 10 nos dois modos.
