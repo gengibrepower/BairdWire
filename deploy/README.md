@@ -25,6 +25,8 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
+Recomendado: preencha também `BAIRDWIRE_RTC_ADDRESS` com o IP público da máquina. Sem ele, o nó anuncia na negociação da mídia todos os IPs da máquina, inclusive os das redes internas do Docker (`172.x`), que ninguém de fora alcança. A chamada funciona mesmo assim, mas o navegador perde tempo testando endereços inúteis.
+
 Depois abra `https://<seu domínio>/`. A página de diagnóstico testa o WebSocket e o eco de áudio, e mostra se a mídia passou por UDP.
 
 ## Atualizar
