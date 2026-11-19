@@ -1,6 +1,6 @@
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { defineConfig } from "vite";
-import { developmentCsp, devNonce } from "./csp";
+import { developmentCsp, devNonce } from "./csp.ts";
 
 export default defineConfig({
   plugins: [svelte()],
