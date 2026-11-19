@@ -50,7 +50,8 @@ CI por PR: `zig fmt --check`, `zig build test`, build `ReleaseSafe` para x86_64 
 ## Workflow de git
 
 - Branch (`feat/`, `fix/`, `docs/`, `chore/`, `zig-0.N`) → PR → CI verde → squash merge. Histórico linear. Conventional Commits.
-- **Antes de cada commit:** mostrar um resumo do que mudou e **pedir permissão**.
+- **Commits atômicos:** o menor possível, uma mudança por commit, e cada um compilando e passando nos testes, para facilitar o rollback e o `git bisect`.
+- **Commits pequenos e rotineiros** podem ser feitos direto. Os **importantes** (decisões, ADRs, regras, dependências) pedem permissão, com um resumo do que mudou antes.
 - **Sem trailer de co-autoria** e sem `Signed-off-by` (o projeto usa CLA).
 - **Nunca** fazer push. **Nunca** abrir PR.
 
