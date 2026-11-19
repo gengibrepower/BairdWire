@@ -11,7 +11,7 @@ pub fn configure(b: *std.Build, module: *std.Build.Module, upstream: *std.Build.
 pub fn build(
     b: *std.Build,
     target: std.Build.ResolvedTarget,
-    optimize: std.builtin.OptimizeMode,
+    optimize: std.lang.Optimize,
 ) *std.Build.Step.Compile {
     const upstream = b.dependency("mbedtls", .{});
     const module = b.createModule(.{

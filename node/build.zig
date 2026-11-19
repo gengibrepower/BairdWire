@@ -1,9 +1,10 @@
 const std = @import("std");
 const mbedtls = @import("build/mbedtls.zig");
+const libjuice = @import("build/libjuice.zig");
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{ .preferred_optimize_mode = .ReleaseSafe });
+    const optimize = b.standardOptimizeOption(.{ .preferred_optimize_mode = .safe });
 
     const core = b.addModule("core", .{
         .root_source_file = b.path("src/core/root.zig"),
@@ -34,25 +35,40 @@ pub fn build(b: *std.Build) void {
     test_step.dependOn(&b.addRunArtifact(b.addTest(.{ .root_module = core })).step);
     test_step.dependOn(&b.addRunArtifact(b.addTest(.{ .root_module = exe.root_module })).step);
 
-    const mbedtls_lib = mbedtls.build(b, target, optimize);
-    const mbedtls_c = b.addTranslateC(.{
-        .root_source_file = b.path("build/mbedtls/smoke.h"),
-        .target = target,
-        .optimize = optimize,
+    const smoke: Smoke = .{ .b = b, .step = test_step, .target = target, .optimize = optimize };
+    smoke.add("mbedtls", mbedtls.build(b, target, optimize), &.{
+        .{ "MBEDTLS_USER_CONFIG_FILE", "\"" ++ mbedtls.config_header ++ "\"" },
     });
-    mbedtls_c.addIncludePath(b.dependency("mbedtls", .{}).path("include"));
-    mbedtls_c.addIncludePath(b.path("build/mbedtls"));
-    mbedtls_c.defineCMacro("MBEDTLS_USER_CONFIG_FILE", "\"" ++ mbedtls.config_header ++ "\"");
-    const mbedtls_smoke = b.addTest(.{
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("build/mbedtls/smoke_test.zig"),
-            .target = target,
-            .optimize = optimize,
-            .imports = &.{
-                .{ .name = "mbedtls_c", .module = mbedtls_c.createModule() },
-            },
-        }),
-    });
-    mbedtls_smoke.root_module.linkLibrary(mbedtls_lib);
-    test_step.dependOn(&b.addRunArtifact(mbedtls_smoke).step);
+    smoke.add("libjuice", libjuice.build(b, target, optimize), &.{});
 }
+
+const Smoke = struct {
+    b: *std.Build,
+    step: *std.Build.Step,
+    target: std.Build.ResolvedTarget,
+    optimize: std.lang.Optimize,
+
+    fn add(s: Smoke, comptime name: []const u8, lib: *std.Build.Step.Compile, macros: []const [2][]const u8) void {
+        const translated = s.b.addTranslateC(.{
+            .root_source_file = s.b.path("build/" ++ name ++ "/smoke.h"),
+            .target = s.target,
+            .optimize = s.optimize,
+        });
+        translated.addIncludePath(lib.getEmittedIncludeTree());
+        for (macros) |macro| translated.defineCMacro(macro[0], macro[1]);
+
+        const t = s.b.addTest(.{
+            .name = name ++ "-smoke",
+            .root_module = s.b.createModule(.{
+                .root_source_file = s.b.path("build/" ++ name ++ "/smoke_test.zig"),
+                .target = s.target,
+                .optimize = s.optimize,
+                .imports = &.{
+                    .{ .name = name ++ "_c", .module = translated.createModule() },
+                },
+            }),
+        });
+        t.root_module.linkLibrary(lib);
+        s.step.dependOn(&s.b.addRunArtifact(t).step);
+    }
+};
