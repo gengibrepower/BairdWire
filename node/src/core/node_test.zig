@@ -16,7 +16,7 @@ fn run(node: *node_mod.Node, arena: *std.heap.ArenaAllocator, event: node_mod.Ev
 test "efeitos saem com o id da conexão que os produziu" {
     var arena: std.heap.ArenaAllocator = .init(testing.allocator);
     defer arena.deinit();
-    var node: node_mod.Node = .init(testing.allocator, "0.1.0-dev");
+    var node: node_mod.Node = .init(testing.allocator, "0.1.0-dev", 0);
     defer node.deinit();
 
     _ = try run(&node, &arena, .{ .opened = .{ .id = 7, .now = 0 } });
@@ -30,7 +30,7 @@ test "efeitos saem com o id da conexão que os produziu" {
 test "tick só derruba quem não mandou hello a tempo" {
     var arena: std.heap.ArenaAllocator = .init(testing.allocator);
     defer arena.deinit();
-    var node: node_mod.Node = .init(testing.allocator, "0.1.0-dev");
+    var node: node_mod.Node = .init(testing.allocator, "0.1.0-dev", 0);
     defer node.deinit();
 
     _ = try run(&node, &arena, .{ .opened = .{ .id = 1, .now = 0 } });
@@ -47,7 +47,7 @@ test "tick só derruba quem não mandou hello a tempo" {
 test "eventos de conexão desconhecida ou já encerrada são ignorados" {
     var arena: std.heap.ArenaAllocator = .init(testing.allocator);
     defer arena.deinit();
-    var node: node_mod.Node = .init(testing.allocator, "0.1.0-dev");
+    var node: node_mod.Node = .init(testing.allocator, "0.1.0-dev", 0);
     defer node.deinit();
 
     try testing.expectEqual(@as(usize, 0), (try run(&node, &arena, .{ .text = .{ .id = 99, .payload = hello } })).len);
