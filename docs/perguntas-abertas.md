@@ -4,11 +4,11 @@ O que ficou para decidir depois e em que momento precisa ser decidido.
 
 | # | Pergunta | Quando precisa estar decidida | Contexto |
 |---|----------|-------------------------------|----------|
-| P1 | Nome público definitivo (manter BairdWire ou trocar; candidatos: Baran, Meucci) | Antes do primeiro vídeo publicado | ADR 0001. Antes de decidir, checar colisões no GitHub, no npm, em domínios e na marca (INPI/USPTO). Depois de escolher, registrar a marca (ADR 0026). |
+| ~~P1~~ | ~~Nome público definitivo (manter BairdWire ou trocar; candidatos: Baran, Meucci)~~ | **Resolvida no ADR 0037**: BairdWire | ADR 0001. Falta registrar a marca (ADR 0026), a partir de uma busca direta no INPI e no USPTO. |
 | P2 | O contorno para o áudio do jogo no Linux (sink virtual do PipeWire como entrada de microfone) funciona no Chrome e no Firefox? | Antes de fechar a fase de compartilhamento de tela | ADR 0003. Se funcionar, documentar para os usuários. |
 | ~~P3~~ | ~~Valores padrão de tamanho máximo de imagem, cota e retenção~~ | **Resolvida no ADR 0017**: 10 MB, 5 GB e 90 dias | ADR 0003. |
 | P4 | Casca do app desktop do v0.2: Electron (Chromium com flags controladas), Tauri (WebKitGTK no Linux, WebRTC fraco) ou cliente nativo, sempre com o módulo nativo em Zig para captura e encode | Antes de começar o v0.2 | ADR 0005. A casca sozinha não resolve: o ganho vem do módulo nativo. |
-| P5 | A `libdatachannel` com `libjuice` suporta ICE-TCP do lado do servidor? Se não, usar `libnice` ou outra solução? | No bloco 4.8, antes de fixar a lib de WebRTC | ADR 0009. |
+| P5 | A `libdatachannel` com `libjuice` suporta ICE-TCP do lado do servidor? Se não, usar `libnice` ou outra solução? | **Primeira parte respondida em 2026-11-19: não.** O `libjuice` só tem ICE-TCP ativo (`JUICE_ICE_TCP_MODE_ACTIVE`, como cliente), na v0.24.6 e no master (issue #211 aberta). Falta escolher o substituto (TURN sobre TLS, `libnice` ou ICE-TCP passivo no `libjuice`), num ADR novo, com os dados da P6 | ADR 0009. O eco do M0 funciona por UDP. |
 | P6 | O que a rede da faculdade (PUCPR) bloqueia: UDP passa? Quais portas TCP passam além da 443? | Assim que for possível testar no campus, e antes da fase de compartilhamento de tela | ADR 0010. Se passar só a 443, a multiplexação na 443 dentro do nó entra no v0.1. |
 | P7 | Política de compatibilidade de versões entre cliente e nó (quantas versões o nó aceita, como o cliente avisa que precisa atualizar) | Antes do primeiro release usado por mais de um grupo | ADR 0011. |
 | P8 | Chave pública do nó: pinning e assinatura do convite quando houver cliente fora do nó | Antes do app desktop (v0.2) ou da federação | ADR 0015. No cliente web servido pelo nó, ela não protege nada. |

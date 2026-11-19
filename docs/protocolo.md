@@ -1,6 +1,6 @@
 # Protocolo do BairdWire
 
-A especificação do canal de tempo real entre o cliente e o nó. É a fonte da verdade: os tipos em Zig (`node/src/core`) e em TypeScript (`client/`) seguem este documento, e os testes de integração do protocolo verificam os dois (ADR 0011).
+A especificação do canal de tempo real entre o cliente e o nó. É a fonte da verdade: os tipos em Zig (`node/src/core/protocol.zig`) e em TypeScript (`client/src/lib/protocol.ts`) seguem este documento, e os testes de integração do protocolo verificam os dois (ADR 0011).
 
 **Versão atual do protocolo: 1.**
 
@@ -84,14 +84,62 @@ Um erro. Quando o erro encerra a conexão, o nó envia esta mensagem e em seguid
 
 `re` aparece quando o erro responde a um pedido com `id` válido.
 
+## Mídia (`rtc.*`)
+
+Cada cliente usa duas PeerConnections (ADR 0012). Na **publish**, o cliente oferece e envia a sua mídia. Na **subscribe**, o nó oferece e envia a mídia dos outros. Cada uma tem um lado só que oferece, então não há *glare*. O trickle ICE vai só do cliente para o nó: os candidatos do nó já vêm no SDP, que o nó só envia depois de juntar todos.
+
+O fluxo do eco (M0):
+
+1. O cliente envia `rtc.offer` com `pc: "publish"`.
+2. O nó responde `rtc.answer` com `re` igual ao `id` da oferta.
+3. Quando a track de áudio Opus do publish chega, o nó envia `rtc.offer` com `pc: "subscribe"`, com um `id` próprio.
+4. O cliente responde `rtc.answer` com `re` igual a esse `id`.
+5. Os dois lados enviam `rtc.candidate` para o nó à medida que encontram candidatos. Os do subscribe só valem depois do passo 4.
+
+O nó repassa o RTP Opus do publish para o subscribe trocando só o SSRC, sem ler o payload (ADR 0022). RTCP e outros payload types não são repassados no M0.
+
+### `rtc.offer`
+
+| Campo de `d` | Tipo | Significado |
+|---|---|---|
+| `pc` | `"publish"` ou `"subscribe"` | Do cliente, sempre `publish`. Do nó, sempre `subscribe` |
+| `sdp` | string não vazia | A oferta |
+
+Do cliente, `id` é obrigatório.
+
+```json
+{ "v": 1, "t": "rtc.offer", "id": "o1", "d": { "pc": "publish", "sdp": "v=0..." } }
+```
+
+### `rtc.answer`
+
+Os mesmos campos de `rtc.offer`. Do cliente, `pc` é sempre `subscribe` e `re` é obrigatório. Do nó, `pc` é sempre `publish`.
+
+```json
+{ "v": 1, "t": "rtc.answer", "re": "subscribe-2", "d": { "pc": "subscribe", "sdp": "v=0..." } }
+```
+
+### `rtc.candidate` (cliente → nó)
+
+| Campo de `d` | Tipo | Significado |
+|---|---|---|
+| `pc` | `"publish"` ou `"subscribe"` | A PeerConnection do candidato |
+| `candidate` | string, até 1024 bytes | A linha `candidate:` do navegador. Vazia indica o fim dos candidatos e é ignorada |
+| `mid` | string, de 1 a 32 bytes | O `sdpMid` do candidato |
+
+```json
+{ "v": 1, "t": "rtc.candidate", "d": { "pc": "publish", "candidate": "candidate:1 1 udp ...", "mid": "0" } }
+```
+
 ## Códigos
 
 | `code` | Fechamento | Quando |
 |---|---|---|
-| `protocol_error` | 4000 | JSON ou envelope inválido, frame binário, primeira mensagem que não é `session.hello`, `session.hello` repetido |
+| `protocol_error` | 4000 | JSON ou envelope inválido, frame binário, primeira mensagem que não é `session.hello`, `session.hello` repetido, `d` inválido numa mensagem `rtc.*`, oferta do cliente fora do publish ou sem `id`, resposta do cliente fora do subscribe ou sem `re` |
 | `version_incompatible` | 4001 | Nenhuma versão em comum |
 | `hello_timeout` | 4002 | O `session.hello` não chegou em 5 s |
 | `message_too_large` | 1009 | Mensagem acima do limite |
 | `unknown_type` | — (não fecha) | Depois do `session.welcome`, um `t` que o nó não conhece |
+| `invalid_state` | — (não fecha) | Uma mensagem `rtc.*` válida fora de hora: segunda oferta de publish, resposta antes da oferta do nó ou com `re` errado, candidato de uma PeerConnection que ainda não existe |
 
 Campos desconhecidos no envelope são ignorados, para que campos opcionais novos não quebrem nós antigos. Chaves duplicadas num mesmo objeto são `protocol_error`.

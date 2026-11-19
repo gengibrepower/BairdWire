@@ -2,6 +2,7 @@ const std = @import("std");
 const ws = @import("websocket");
 const core = @import("core");
 const websocket = @import("adapters/websocket.zig");
+const webrtc = @import("adapters/webrtc.zig");
 const node = core.node;
 
 const log = std.log.scoped(.runtime);
@@ -10,6 +11,7 @@ pub const Config = struct {
     origin: []const u8,
     address: []const u8 = "127.0.0.1",
     port: u16 = 8090,
+    rtc: webrtc.Config = .{},
 };
 
 const tick_interval_ms = 1_000;
@@ -21,6 +23,7 @@ pub const Runtime = struct {
     buffer: [queue_capacity]node.Event,
     events: websocket.Events,
     gateway: websocket.Gateway,
+    peers: webrtc.Peers,
     server: ws.Server(websocket.Handler),
     listener: std.Thread,
     actor: std.Thread,
@@ -32,6 +35,8 @@ pub const Runtime = struct {
         rt.events = .init(&rt.buffer);
         rt.gateway = .{ .io = io, .gpa = gpa, .events = &rt.events, .origin = config.origin };
         errdefer rt.gateway.deinit();
+        rt.peers = .start(io, gpa, &rt.events, config.rtc);
+        errdefer rt.peers.stop();
 
         rt.server = try .init(io, gpa, .{
             .address = config.address,
@@ -57,19 +62,22 @@ pub const Runtime = struct {
         rt.listener.join();
         rt.events.close(rt.io);
         rt.actor.join();
+        rt.peers.stop();
         rt.server.deinit();
         rt.gateway.deinit();
     }
 
     fn runActor(rt: *Runtime) void {
-        var state: node.Node = .init(rt.gpa, core.version);
+        var seed: [8]u8 = undefined;
+        rt.io.random(&seed);
+        var state: node.Node = .init(rt.gpa, core.version, std.mem.readInt(u64, &seed, .little));
         defer state.deinit();
         var arena: std.heap.ArenaAllocator = .init(rt.gpa);
         defer arena.deinit();
 
         while (true) {
             const event = rt.events.getOneUncancelable(rt.io) catch break;
-            defer if (event == .text) rt.gpa.free(event.text.payload);
+            defer event.free(rt.gpa);
             _ = arena.reset(.retain_capacity);
 
             var effects: node.Effects = .empty;
@@ -77,7 +85,10 @@ pub const Runtime = struct {
                 log.err("sem memória ao processar um evento", .{});
                 continue;
             };
-            for (effects.items) |effect| rt.gateway.dispatch(effect);
+            for (effects.items) |effect| switch (effect) {
+                .send, .close => rt.gateway.dispatch(effect),
+                else => rt.peers.dispatch(effect),
+            };
         }
     }
 
