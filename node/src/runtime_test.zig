@@ -75,3 +75,18 @@ test "conexão sem hello é fechada com 4002 pelo relógio do runtime" {
     try testing.expectEqual(ws.Message.Type.close, close.type);
     try testing.expectEqual(@as(u16, 4002), std.mem.readInt(u16, close.data[0..2], .big));
 }
+
+test "parar o runtime no meio de um handshake não corrompe memória nem trava" {
+    const upgrade = "GET /api/ws HTTP/1.1\r\nhost: 127.0.0.1\r\norigin: " ++ origin ++
+        "\r\nupgrade: websocket\r\nconnection: upgrade\r\nsec-websocket-version: 13\r\nsec-websocket-key: dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n";
+    for (0..50) |_| {
+        var rt: runtime.Runtime = undefined;
+        try startRuntime(&rt, 18_095);
+        const address = try std.Io.net.IpAddress.parse("127.0.0.1", 18_095);
+        const stream = try address.connect(testing.io, .{ .mode = .stream });
+        defer stream.close(testing.io);
+        var writer = stream.writer(testing.io, &.{});
+        try writer.interface.writeAll(upgrade);
+        rt.stop();
+    }
+}

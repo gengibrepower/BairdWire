@@ -24,7 +24,7 @@ pub const Runtime = struct {
     server: ws.Server(websocket.Handler),
     listener: std.Thread,
     actor: std.Thread,
-    ticker: std.Thread,
+    ticker: std.Io.Future(std.Io.Cancelable!void),
 
     pub fn start(rt: *Runtime, io: std.Io, gpa: std.mem.Allocator, config: Config) !void {
         rt.io = io;
@@ -46,17 +46,17 @@ pub const Runtime = struct {
             rt.events.close(io);
             rt.actor.join();
         }
-        rt.ticker = try std.Thread.spawn(.{}, runTicker, .{rt});
-        errdefer rt.ticker.join();
+        rt.ticker = try io.concurrent(runTicker, .{rt});
+        errdefer rt.ticker.cancel(io) catch {};
         rt.listener = try rt.server.listenInNewThread(&rt.gateway);
     }
 
     pub fn stop(rt: *Runtime) void {
+        rt.ticker.cancel(rt.io) catch {};
         rt.server.stop();
         rt.listener.join();
         rt.events.close(rt.io);
         rt.actor.join();
-        rt.ticker.join();
         rt.server.deinit();
         rt.gateway.deinit();
     }
@@ -81,10 +81,10 @@ pub const Runtime = struct {
         }
     }
 
-    fn runTicker(rt: *Runtime) void {
+    fn runTicker(rt: *Runtime) std.Io.Cancelable!void {
         while (true) {
-            rt.io.sleep(.fromMilliseconds(tick_interval_ms), .awake) catch break;
-            rt.events.putOneUncancelable(rt.io, .{ .tick = websocket.nowMs(rt.io) }) catch break;
+            try rt.io.sleep(.fromMilliseconds(tick_interval_ms), .awake);
+            rt.events.putOneUncancelable(rt.io, .{ .tick = websocket.nowMs(rt.io) }) catch return;
         }
     }
 };
