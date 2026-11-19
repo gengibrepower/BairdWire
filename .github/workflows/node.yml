@@ -50,6 +50,7 @@ jobs:
             node/zig-pkg
             ~/.cache/zig
           key: zig-${{ runner.os }}-${{ matrix.target }}-${{ hashFiles('.zig-version', 'node/build.zig.zon') }}
+          restore-keys: zig-${{ runner.os }}-${{ matrix.target }}-
       - run: zig build test -Dtarget=${{ matrix.target }} --summary all
       - run: zig build test -Dtarget=${{ matrix.target }} -Drelease --summary all
 
@@ -72,4 +73,5 @@ jobs:
             node/zig-pkg
             ~/.cache/zig
           key: zig-${{ runner.os }}-release-${{ matrix.target }}-${{ hashFiles('.zig-version', 'node/build.zig.zon') }}
+          restore-keys: zig-${{ runner.os }}-release-${{ matrix.target }}-
       - run: zig build -Dtarget=${{ matrix.target }} -Drelease
