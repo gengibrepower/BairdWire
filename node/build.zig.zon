@@ -20,6 +20,14 @@
             .url = "https://github.com/paullouisageneau/usrsctp/archive/fec583d54493f879d2ae44a743423bf8a04371ab.tar.gz",
             .hash = "N-V-__8AALAGWACeA2U3iSwHwHdWNrq6RB1I8N80fRDQYjrw",
         },
+        .plog = .{
+            .url = "https://github.com/SergiusTheBest/plog/archive/94899e0b926ac1b0f4750bfbd495167b4a6ae9ef.tar.gz",
+            .hash = "N-V-__8AAHtdDQDis4xbVP81BKAWxzs139lkmIgHT9HpIdfP",
+        },
+        .libdatachannel = .{
+            .url = "https://github.com/paullouisageneau/libdatachannel/archive/refs/tags/v0.24.6.tar.gz",
+            .hash = "N-V-__8AAH7wNwObI9EjtWHx-gKAmR5w9n6GoPvQFTAtlm1v",
+        },
     },
     .paths = .{
         "build",

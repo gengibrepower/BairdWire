@@ -3,6 +3,7 @@ const mbedtls = @import("build/mbedtls.zig");
 const libjuice = @import("build/libjuice.zig");
 const libsrtp = @import("build/libsrtp.zig");
 const usrsctp = @import("build/usrsctp.zig");
+const libdatachannel = @import("build/libdatachannel.zig");
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
@@ -42,9 +43,16 @@ pub fn build(b: *std.Build) void {
     smoke.add("mbedtls", mbedtls_lib, &.{
         .{ "MBEDTLS_USER_CONFIG_FILE", "\"" ++ mbedtls.config_header ++ "\"" },
     });
-    smoke.add("libjuice", libjuice.build(b, target, optimize), &.{});
-    smoke.add("libsrtp", libsrtp.build(b, target, optimize, mbedtls_lib), &.{});
-    smoke.add("usrsctp", usrsctp.build(b, target, optimize), &.{});
+    const deps: libdatachannel.Deps = .{
+        .mbedtls = mbedtls_lib,
+        .juice = libjuice.build(b, target, optimize),
+        .srtp = libsrtp.build(b, target, optimize, mbedtls_lib),
+        .usrsctp = usrsctp.build(b, target, optimize),
+    };
+    smoke.add("libjuice", deps.juice, &.{});
+    smoke.add("libsrtp", deps.srtp, &.{});
+    smoke.add("usrsctp", deps.usrsctp, &.{});
+    smoke.add("libdatachannel", libdatachannel.build(b, target, optimize, deps), &libdatachannel.macros);
 }
 
 const Smoke = struct {
