@@ -39,3 +39,4 @@
 | [0035](0035-handshake-e-negociacao-de-versao.md) | Handshake `hello` e negociação de versão |
 | [0036](0036-cla-fora-dos-requisitos-do-primeiro-video.md) | CLA Assistant fora dos requisitos do primeiro vídeo |
 | [0037](0037-nome-definitivo.md) | Nome definitivo: BairdWire |
+| [0038](0038-rede-do-container-do-no.md) | Rede do container do nó no v0.1 |
