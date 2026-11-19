@@ -46,3 +46,27 @@ O que foi verificado em 2026-11-19:
 - Com o Zig 0.18, os metadados de pacotes nus podem reduzir e estabilizar os hashes dessas dependências. É opt-in e entra na migração da 0.18.
 - A P5 (ICE-TCP no `libjuice`) continua aberta e é respondida no M0.
 - Fica mais difícil: depender de um `build.zig` mantido por nós para uma lib C++ com 5 dependências C, em vez do CMake oficial.
+
+## Adendo (2026-11-19): WebSocket sem o `http.zig` no M0
+
+O `http.zig` fixa o `websocket.zig` num commit de 2026-10-04, anterior à correção do `conn.close()` chamado de outra thread (commit `105eed7`, issue #116 do `websocket.zig`). Sem ela, fechar a conexão a partir do ator (ADR 0029) fecha o file descriptor enquanto a thread da lib ainda o usa, e o número pode ser reaproveitado por outra conexão.
+
+- O WebSocket usa o servidor do próprio **`websocket.zig`, fixado no `105eed7`**, atrás do mesmo adaptador.
+- O `http.zig` entra na fase 2, para o REST, num listener próprio. O Caddy encaminha `/api/ws` e o resto de `/api/` para portas locais diferentes.
+- Na fase 2, reavaliar juntar tudo no `http.zig`, se ele tiver atualizado a dependência.
+- Os logs de bibliotecas de terceiros passam por um filtro no executável que descarta os argumentos, porque o `websocket.zig` loga o endereço do cliente (ADR 0021).
+
+
+## Adendo (2026-11-19): fork do `websocket.zig` com a correção do encerramento
+
+O `105eed7` tem três bugs ao parar o servidor no modo nonblocking (Linux), que derrubavam ou travavam os testes de integração em cerca de 1 rodada a cada 5 em ReleaseSafe:
+
+- **Use-after-free:** o `deinit` do worker liberava as conexões antes de esvaziar o pool de threads, e um job pendente rodava sobre a memória já liberada (`panic: switch on corrupt value`).
+- **Sinal perdido:** o `stop()` esperava a condição sem predicado, e o `listen()` sinalizava sem segurar o mutex. Se o sinal caísse entre os dois, o `stop()` travava para sempre.
+- **Socket fechado sob um job pendente:** o shutdown fechava os sockets antes de esvaziar o pool, e um handshake na fila escrevia no descritor já fechado (EBADF, panic em Debug), cujo número podia já pertencer a outro arquivo.
+
+Decisão:
+
+- O `websocket.zig` passa a vir do **fork `gengibrepower/websocket.zig`, fixado no `f862236`**: o `105eed7` mais dois commits de correção, com um teste de regressão. A correção foi proposta no upstream na [PR #117](https://github.com/karlseguin/websocket.zig/pull/117).
+- **Voltar para o upstream** assim que ele publicar a correção (ou uma equivalente), apagando o fork.
+- O nó ganhou um teste de regressão próprio: parar o runtime 50 vezes no meio de um handshake. Contra o upstream sem correção, ele falha em 9 de 10 rodadas em ReleaseSafe. Só com o primeiro commit da correção, falha em 10 de 10 em Debug. Com os dois, passa em 10 de 10 nos dois modos.

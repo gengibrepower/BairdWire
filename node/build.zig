@@ -23,6 +23,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "core", .module = core },
+                .{ .name = "websocket", .module = b.dependency("websocket", .{ .target = target, .optimize = optimize }).module("websocket") },
             },
         }),
     });

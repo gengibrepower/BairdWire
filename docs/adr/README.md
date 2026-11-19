@@ -36,4 +36,5 @@
 | [0032](0032-repositorio-e-workflow.md) | Repositório, workflow e CI |
 | [0033](0033-serie-no-youtube.md) | Série no YouTube |
 | [0034](0034-dependencias-nativas-do-no.md) | Dependências nativas do nó e biblioteca de TLS |
+| [0035](0035-handshake-e-negociacao-de-versao.md) | Handshake `hello` e negociação de versão |
 | [0036](0036-cla-fora-dos-requisitos-do-primeiro-video.md) | CLA Assistant fora dos requisitos do primeiro vídeo |
