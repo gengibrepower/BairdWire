@@ -4,11 +4,9 @@ Um app de comunicação estilo Discord (texto, voz e compartilhamento de tela), 
 
 Estou fazendo isso pra usar com os meus grupos (pair programming, reunião de trabalho da faculdade e jogo) e pra aprender redes, WebRTC, criptografia e Zig no caminho.
 
-> O nome é provisório.
-
 ## Status
 
-**Planejamento.** Ainda não tem código: por enquanto só tem o escopo do v0.1 e as decisões de arquitetura.
+**Fase 0 (fundação).** O nó em Zig já compila com a `libdatachannel`, mas ainda não dá pra usar. O escopo do v0.1 e as decisões de arquitetura estão em [`docs/`](docs/).
 
 - [Escopo do v0.1](docs/escopo.md)
 - [Decisões (ADRs)](docs/adr/README.md)

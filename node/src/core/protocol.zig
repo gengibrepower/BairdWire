@@ -9,6 +9,8 @@ pub const max_message: usize = 64 * 1024;
 pub const max_id_len: usize = 64;
 pub const max_client_len: usize = 64;
 pub const max_resume_len: usize = 256;
+pub const max_mid_len: usize = 32;
+pub const max_candidate_len: usize = 1024;
 
 pub const ErrorCode = enum {
     protocol_error,
@@ -16,6 +18,7 @@ pub const ErrorCode = enum {
     hello_timeout,
     message_too_large,
     unknown_type,
+    invalid_state,
 
     pub fn closeCode(code: ErrorCode) ?u16 {
         return switch (code) {
@@ -23,7 +26,7 @@ pub const ErrorCode = enum {
             .version_incompatible => 4001,
             .hello_timeout => 4002,
             .message_too_large => 1009,
-            .unknown_type => null,
+            .unknown_type, .invalid_state => null,
         };
     }
 };
@@ -41,6 +44,70 @@ pub const Hello = struct {
     client: ?[]const u8,
     resume_token: ?[]const u8,
 };
+
+pub const Role = enum { publish, subscribe };
+
+pub const Signal = union(enum) {
+    offer: Description,
+    answer: Description,
+    candidate: Candidate,
+
+    pub const Description = struct { pc: Role, sdp: []const u8 };
+    pub const Candidate = struct { pc: Role, candidate: []const u8, mid: []const u8 };
+};
+
+pub const ParsedSignal = union(enum) {
+    not_signal,
+    invalid,
+    signal: Signal,
+};
+
+pub fn parseSignal(t: []const u8, d: std.json.ObjectMap) ParsedSignal {
+    const kind: std.meta.Tag(Signal) = if (std.mem.eql(u8, t, "rtc.offer"))
+        .offer
+    else if (std.mem.eql(u8, t, "rtc.answer"))
+        .answer
+    else if (std.mem.eql(u8, t, "rtc.candidate"))
+        .candidate
+    else
+        return .not_signal;
+
+    const pc_name = asString(d.get("pc") orelse return .invalid) orelse return .invalid;
+    const pc = std.meta.stringToEnum(Role, pc_name) orelse return .invalid;
+    switch (kind) {
+        .offer, .answer => {
+            const sdp = asString(d.get("sdp") orelse return .invalid) orelse return .invalid;
+            if (sdp.len == 0) return .invalid;
+            const description: Signal.Description = .{ .pc = pc, .sdp = sdp };
+            return .{ .signal = if (kind == .offer) .{ .offer = description } else .{ .answer = description } };
+        },
+        .candidate => {
+            const candidate = asString(d.get("candidate") orelse return .invalid) orelse return .invalid;
+            const mid = asString(d.get("mid") orelse return .invalid) orelse return .invalid;
+            if (candidate.len > max_candidate_len or mid.len == 0 or mid.len > max_mid_len) return .invalid;
+            return .{ .signal = .{ .candidate = .{ .pc = pc, .candidate = candidate, .mid = mid } } };
+        },
+    }
+}
+
+pub fn rtcDescription(
+    arena: std.mem.Allocator,
+    kind: enum { offer, answer },
+    id: ?[]const u8,
+    re: ?[]const u8,
+    pc: Role,
+    sdp: []const u8,
+) std.mem.Allocator.Error![]const u8 {
+    const Data = struct { pc: Role, sdp: []const u8 };
+    const Message = struct { v: u32, t: []const u8, id: ?[]const u8, re: ?[]const u8, d: Data };
+    return std.json.Stringify.valueAlloc(arena, Message{
+        .v = current_version,
+        .t = if (kind == .offer) "rtc.offer" else "rtc.answer",
+        .id = id,
+        .re = re,
+        .d = .{ .pc = pc, .sdp = sdp },
+    }, .{ .emit_null_optional_fields = false });
+}
 
 pub fn parseEnvelope(arena: std.mem.Allocator, payload: []const u8) std.mem.Allocator.Error!?Envelope {
     const root = std.json.parseFromSliceLeaky(std.json.Value, arena, payload, .{}) catch |err| switch (err) {

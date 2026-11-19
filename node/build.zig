@@ -27,6 +27,23 @@ pub fn build(b: *std.Build) void {
             },
         }),
     });
+    const mbedtls_lib = mbedtls.build(b, target, optimize);
+    const deps: libdatachannel.Deps = .{
+        .mbedtls = mbedtls_lib,
+        .juice = libjuice.build(b, target, optimize),
+        .srtp = libsrtp.build(b, target, optimize, mbedtls_lib),
+        .usrsctp = usrsctp.build(b, target, optimize),
+    };
+    const datachannel_lib = libdatachannel.build(b, target, optimize, deps);
+    const rtc_c = b.addTranslateC(.{
+        .root_source_file = b.path("build/libdatachannel/smoke.h"),
+        .target = target,
+        .optimize = optimize,
+    });
+    rtc_c.addIncludePath(datachannel_lib.getEmittedIncludeTree());
+    for (libdatachannel.macros) |macro| rtc_c.defineCMacro(macro[0], macro[1]);
+    exe.root_module.addImport("rtc_c", rtc_c.createModule());
+    exe.root_module.linkLibrary(datachannel_lib);
     b.installArtifact(exe);
 
     const run_step = b.step("run", "Roda o nó");
@@ -40,20 +57,13 @@ pub fn build(b: *std.Build) void {
     test_step.dependOn(&b.addRunArtifact(b.addTest(.{ .root_module = exe.root_module })).step);
 
     const smoke: Smoke = .{ .b = b, .step = test_step, .target = target, .optimize = optimize };
-    const mbedtls_lib = mbedtls.build(b, target, optimize);
     smoke.add("mbedtls", mbedtls_lib, &.{
         .{ "MBEDTLS_USER_CONFIG_FILE", "\"" ++ mbedtls.config_header ++ "\"" },
     });
-    const deps: libdatachannel.Deps = .{
-        .mbedtls = mbedtls_lib,
-        .juice = libjuice.build(b, target, optimize),
-        .srtp = libsrtp.build(b, target, optimize, mbedtls_lib),
-        .usrsctp = usrsctp.build(b, target, optimize),
-    };
     smoke.add("libjuice", deps.juice, &.{});
     smoke.add("libsrtp", deps.srtp, &.{});
     smoke.add("usrsctp", deps.usrsctp, &.{});
-    smoke.add("libdatachannel", libdatachannel.build(b, target, optimize, deps), &libdatachannel.macros);
+    smoke.add("libdatachannel", datachannel_lib, &libdatachannel.macros);
 }
 
 const Smoke = struct {
