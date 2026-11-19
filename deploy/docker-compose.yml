@@ -1,0 +1,47 @@
+name: bairdwire
+
+services:
+  node:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: node
+    image: bairdwire-node:local
+    restart: unless-stopped
+    network_mode: host
+    user: "65532:65532"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    environment:
+      BAIRDWIRE_ORIGIN: https://${BAIRDWIRE_DOMAIN:?defina BAIRDWIRE_DOMAIN no .env}
+      BAIRDWIRE_WS_ADDRESS: 127.0.0.1
+      BAIRDWIRE_WS_PORT: ${BAIRDWIRE_WS_PORT:-8090}
+      BAIRDWIRE_RTC_UDP_PORT: ${BAIRDWIRE_RTC_UDP_PORT:-50000}
+
+  caddy:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: caddy
+    image: bairdwire-caddy:local
+    restart: unless-stopped
+    network_mode: host
+    user: "65532:65532"
+    read_only: true
+    cap_drop: [ALL]
+    # Sem no-new-privileges: o caddy da imagem oficial usa a file capability
+    # cap_net_bind_service para abrir a 80 e a 443 sem root, e o
+    # no-new-privileges faz o kernel ignorar file capabilities.
+    cap_add: [NET_BIND_SERVICE]
+    tmpfs: [/tmp]
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    environment:
+      BAIRDWIRE_DOMAIN: ${BAIRDWIRE_DOMAIN:?defina BAIRDWIRE_DOMAIN no .env}
+      BAIRDWIRE_WS_PORT: ${BAIRDWIRE_WS_PORT:-8090}
+
+volumes:
+  caddy-data:
+  caddy-config:
