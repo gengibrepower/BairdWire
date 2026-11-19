@@ -7,7 +7,7 @@ A especificação do canal de tempo real entre o cliente e o nó. É a fonte da 
 ## Transporte
 
 - Um WebSocket por cliente, em `wss://<nó>/api/ws`, atrás do Caddy (ADR 0010).
-- O upgrade só é aceito com o cabeçalho `Origin` igual à origem do nó (S1, ADR 0021). Caso contrário, o nó responde `403` e não abre o WebSocket.
+- O upgrade só é aceito em `/api/ws` e com o cabeçalho `Origin` igual à origem do nó (S1, ADR 0021). Caso contrário, o nó recusa o handshake com HTTP `400` e não abre o WebSocket.
 - A sessão viaja no cookie `HttpOnly` (S2). Nenhuma mensagem do protocolo carrega credencial.
 - Cada mensagem é um frame de texto com um objeto JSON em UTF-8. Frames binários são um erro de protocolo.
 

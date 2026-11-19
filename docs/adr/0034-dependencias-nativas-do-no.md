@@ -46,3 +46,13 @@ O que foi verificado em 2026-11-19:
 - Com o Zig 0.18, os metadados de pacotes nus podem reduzir e estabilizar os hashes dessas dependências. É opt-in e entra na migração da 0.18.
 - A P5 (ICE-TCP no `libjuice`) continua aberta e é respondida no M0.
 - Fica mais difícil: depender de um `build.zig` mantido por nós para uma lib C++ com 5 dependências C, em vez do CMake oficial.
+
+## Adendo (2026-11-19): WebSocket sem o `http.zig` no M0
+
+O `http.zig` fixa o `websocket.zig` num commit de 2026-10-04, anterior à correção do `conn.close()` chamado de outra thread (commit `105eed7`, issue #116 do `websocket.zig`). Sem ela, fechar a conexão a partir do ator (ADR 0029) fecha o file descriptor enquanto a thread da lib ainda o usa, e o número pode ser reaproveitado por outra conexão.
+
+- O WebSocket usa o servidor do próprio **`websocket.zig`, fixado no `105eed7`**, atrás do mesmo adaptador.
+- O `http.zig` entra na fase 2, para o REST, num listener próprio. O Caddy encaminha `/api/ws` e o resto de `/api/` para portas locais diferentes.
+- Na fase 2, reavaliar juntar tudo no `http.zig`, se ele tiver atualizado a dependência.
+- Os logs de bibliotecas de terceiros passam por um filtro no executável que descarta os argumentos, porque o `websocket.zig` loga o endereço do cliente (ADR 0021).
+

@@ -28,6 +28,10 @@
             .url = "https://github.com/paullouisageneau/libdatachannel/archive/refs/tags/v0.24.6.tar.gz",
             .hash = "N-V-__8AAH7wNwObI9EjtWHx-gKAmR5w9n6GoPvQFTAtlm1v",
         },
+        .websocket = .{
+            .url = "https://github.com/karlseguin/websocket.zig/archive/105eed779c1833583eb9ad2b9c1b5c78945506fa.tar.gz",
+            .hash = "websocket-0.1.0-ZPISdakeBQAIRoY7BmxffmnGOKUDRXqci26gEEVGAA03",
+        },
     },
     .paths = .{
         "build",
