@@ -196,12 +196,25 @@ fn onMessage(track: c_int, data: [*c]const u8, size: c_int, pointer: ?*anyopaque
 }
 
 fn onLog(level: c.rtcLogLevel, message: [*c]const u8) callconv(.c) void {
+    const text = std.mem.span(message);
+    if (isExpectedNoise(text)) return;
     var buffer: [512]u8 = undefined;
-    const redacted = redact(&buffer, std.mem.span(message));
+    const redacted = redact(&buffer, text);
     switch (level) {
         c.RTC_LOG_FATAL, c.RTC_LOG_ERROR => log.err("{s}", .{redacted}),
         else => log.warn("{s}", .{redacted}),
     }
+}
+
+// O Firefox manda candidatos TCP, e o libjuice avisa uma vez por candidato que
+// ignorou cada um, porque o nó não tem ICE-TCP (P5).
+const expected_noise = [_][]const u8{"ICE-TCP is disabled, ignoring TCP candidate"};
+
+pub fn isExpectedNoise(message: []const u8) bool {
+    for (expected_noise) |noise| {
+        if (std.mem.find(u8, message, noise) != null) return true;
+    }
+    return false;
 }
 
 const redaction = "<redigido>";
@@ -251,4 +264,10 @@ test "redact tira IPv4, IPv6 e portas e mantém o texto" {
 test "redact trunca no tamanho do buffer" {
     var buffer: [8]u8 = undefined;
     try std.testing.expectEqualStrings("conexão", redact(&buffer, "conexão perdida"));
+}
+
+test "isExpectedNoise só cala o aviso de candidato TCP ignorado" {
+    try std.testing.expect(isExpectedNoise("rtc::impl::IceTransport::LogCallback@123: juice: ICE-TCP is disabled, ignoring TCP candidate"));
+    try std.testing.expect(!isExpectedNoise("juice: ICE failed"));
+    try std.testing.expect(!isExpectedNoise("DTLS handshake failed"));
 }
