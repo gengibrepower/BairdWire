@@ -35,3 +35,4 @@
 | [0031](0031-estrategia-de-testes.md) | Estratégia de testes |
 | [0032](0032-repositorio-e-workflow.md) | Repositório, workflow e CI |
 | [0033](0033-serie-no-youtube.md) | Série no YouTube |
+| [0034](0034-dependencias-nativas-do-no.md) | Dependências nativas do nó e biblioteca de TLS |
