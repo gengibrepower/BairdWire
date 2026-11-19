@@ -4,7 +4,7 @@ O que ficou para decidir depois e em que momento precisa ser decidido.
 
 | # | Pergunta | Quando precisa estar decidida | Contexto |
 |---|----------|-------------------------------|----------|
-| P1 | Nome público definitivo (manter BairdWire ou trocar; candidatos: Baran, Meucci) | Antes do primeiro vídeo publicado | ADR 0001. Antes de decidir, checar colisões no GitHub, no npm, em domínios e na marca (INPI/USPTO). Depois de escolher, registrar a marca (ADR 0026). |
+| ~~P1~~ | ~~Nome público definitivo (manter BairdWire ou trocar; candidatos: Baran, Meucci)~~ | **Resolvida no ADR 0037**: BairdWire | ADR 0001. Falta registrar a marca (ADR 0026), a partir de uma busca direta no INPI e no USPTO. |
 | P2 | O contorno para o áudio do jogo no Linux (sink virtual do PipeWire como entrada de microfone) funciona no Chrome e no Firefox? | Antes de fechar a fase de compartilhamento de tela | ADR 0003. Se funcionar, documentar para os usuários. |
 | ~~P3~~ | ~~Valores padrão de tamanho máximo de imagem, cota e retenção~~ | **Resolvida no ADR 0017**: 10 MB, 5 GB e 90 dias | ADR 0003. |
 | P4 | Casca do app desktop do v0.2: Electron (Chromium com flags controladas), Tauri (WebKitGTK no Linux, WebRTC fraco) ou cliente nativo, sempre com o módulo nativo em Zig para captura e encode | Antes de começar o v0.2 | ADR 0005. A casca sozinha não resolve: o ganho vem do módulo nativo. |
