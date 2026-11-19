@@ -1,6 +1,6 @@
 # BairdWire
 
-App de comunicação estilo Discord (texto, voz e compartilhamento de tela), open source e controlado pelas comunidades que o usam. Cada comunidade roda o próprio **nó**, e não existe servidor central. "BairdWire" é um nome provisório (P1).
+App de comunicação estilo Discord (texto, voz e compartilhamento de tela), open source e controlado pelas comunidades que o usam. Cada comunidade roda o próprio **nó**, e não existe servidor central.
 
 Responda sempre em **português do Brasil**.
 

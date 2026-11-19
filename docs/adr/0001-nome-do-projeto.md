@@ -1,6 +1,6 @@
 # ADR 0001 — Nome do projeto
 
-**Status:** aceito (provisório)
+**Status:** aceito. Nome confirmado como definitivo no ADR 0037
 **Data:** 2026-11-18
 
 ## Contexto
