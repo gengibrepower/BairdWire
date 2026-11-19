@@ -1,2 +1,6 @@
 [settings]
 idiomatic_version_file_enable_tools = ["zig"]
+
+[tools]
+node = "24.19.0"
+pnpm = "11.9.0"
