@@ -35,7 +35,7 @@ A série documenta o desenvolvimento e divulga o projeto. O autor gosta de falar
 Arcos grandes podem virar mais de um episódio.
 
 **Antes do primeiro vídeo:**
-- **V1.** Nome definitivo, com colisões checadas (P1).
+- ~~**V1.** Nome definitivo, com colisões checadas (P1).~~ Cumprido no ADR 0037: BairdWire.
 - **V2.** Repositório público com `LICENSE`, `README`, `CONTRIBUTING`, `CODE_OF_CONDUCT`, `GOVERNANCE`, `SECURITY`.
 - ~~**V3.** CLA Assistant configurado.~~ Saiu dos requisitos do primeiro vídeo no ADR 0036: entra antes do primeiro PR de código externo.
 - **V4.** Documentos desta sessão revisados e públicos.

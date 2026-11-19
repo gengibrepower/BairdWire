@@ -38,3 +38,4 @@
 | [0034](0034-dependencias-nativas-do-no.md) | Dependências nativas do nó e biblioteca de TLS |
 | [0035](0035-handshake-e-negociacao-de-versao.md) | Handshake `hello` e negociação de versão |
 | [0036](0036-cla-fora-dos-requisitos-do-primeiro-video.md) | CLA Assistant fora dos requisitos do primeiro vídeo |
+| [0037](0037-nome-definitivo.md) | Nome definitivo: BairdWire |
