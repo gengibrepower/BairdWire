@@ -37,7 +37,7 @@ Arcos grandes podem virar mais de um episódio.
 **Antes do primeiro vídeo:**
 - **V1.** Nome definitivo, com colisões checadas (P1).
 - **V2.** Repositório público com `LICENSE`, `README`, `CONTRIBUTING`, `CODE_OF_CONDUCT`, `GOVERNANCE`, `SECURITY`.
-- **V3.** CLA Assistant configurado.
+- ~~**V3.** CLA Assistant configurado.~~ Saiu dos requisitos do primeiro vídeo no ADR 0036: entra antes do primeiro PR de código externo.
 - **V4.** Documentos desta sessão revisados e públicos.
 - **V5.** 2 a 3 episódios gravados.
 - **V6.** Higiene de tela: perfil de navegador limpo, VPS e domínio de demonstração separados do nó do grupo, nenhum segredo na tela, notificações desligadas.
