@@ -13,7 +13,24 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      run: ${{ steps.changed.outputs.run }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - id: changed
+        working-directory: .
+        run: .github/scripts/changed.sh '^(node/|client/|deploy/|pnpm-|\.zig-version$|\.dockerignore$|\.github/workflows/deploy\.yml$|\.github/scripts/)'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+
   compose:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     defaults:
@@ -31,3 +48,15 @@ jobs:
         run: docker compose logs --no-color
       - if: always()
         run: docker compose down -v
+
+  deploy-ok:
+    if: always()
+    needs: [changes, compose]
+    runs-on: ubuntu-24.04
+    steps:
+      - working-directory: .
+        run: |
+          echo "$RESULTS"
+          if echo "$RESULTS" | grep -q -E 'failure|cancelled'; then exit 1; fi
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
