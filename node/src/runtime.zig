@@ -62,14 +62,16 @@ pub const Runtime = struct {
     }
 
     fn runActor(rt: *Runtime) void {
-        var state: node.Node = .init(rt.gpa, core.version);
+        var seed: [8]u8 = undefined;
+        rt.io.random(&seed);
+        var state: node.Node = .init(rt.gpa, core.version, std.mem.readInt(u64, &seed, .little));
         defer state.deinit();
         var arena: std.heap.ArenaAllocator = .init(rt.gpa);
         defer arena.deinit();
 
         while (true) {
             const event = rt.events.getOneUncancelable(rt.io) catch break;
-            defer if (event == .text) rt.gpa.free(event.text.payload);
+            defer event.free(rt.gpa);
             _ = arena.reset(.retain_capacity);
 
             var effects: node.Effects = .empty;
@@ -77,7 +79,10 @@ pub const Runtime = struct {
                 log.err("sem memória ao processar um evento", .{});
                 continue;
             };
-            for (effects.items) |effect| rt.gateway.dispatch(effect);
+            for (effects.items) |effect| switch (effect) {
+                .send, .close => rt.gateway.dispatch(effect),
+                else => {},
+            };
         }
     }
 

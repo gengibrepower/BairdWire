@@ -10,4 +10,5 @@ test {
     _ = sdp;
     _ = @import("connection_test.zig");
     _ = @import("node_test.zig");
+    _ = @import("rtc_test.zig");
 }

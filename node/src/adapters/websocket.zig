@@ -26,13 +26,12 @@ pub const Gateway = struct {
         switch (effect) {
             .send => |send| if (gateway.conns.get(send.id)) |conn| conn.write(send.payload) catch {},
             .close => |close| if (gateway.conns.get(close.id)) |conn| conn.close(.{ .code = close.code }) catch {},
+            else => unreachable,
         }
     }
 
     fn enqueue(gateway: *Gateway, event: node.Event) void {
-        gateway.events.putOneUncancelable(gateway.io, event) catch {
-            if (event == .text) gateway.gpa.free(event.text.payload);
-        };
+        gateway.events.putOneUncancelable(gateway.io, event) catch event.free(gateway.gpa);
     }
 };
 

@@ -10,6 +10,13 @@ pub const Event = union(enum) {
 pub const Effect = union(enum) {
     send: []const u8,
     close: u16,
+    signal: Signaled,
+};
+
+pub const Signaled = struct {
+    id: ?[]const u8,
+    re: ?[]const u8,
+    signal: protocol.Signal,
 };
 
 pub const Effects = std.ArrayList(Effect);
@@ -68,7 +75,22 @@ pub const Connection = struct {
         const envelope = try protocol.parseEnvelope(arena, payload) orelse
             return conn.fail(arena, effects, null, .protocol_error);
         if (std.mem.eql(u8, envelope.t, "session.hello")) return conn.fail(arena, effects, envelope.id, .protocol_error);
-        try conn.fail(arena, effects, envelope.id, .unknown_type);
+        switch (protocol.parseSignal(envelope.t, envelope.d)) {
+            .not_signal => try conn.fail(arena, effects, envelope.id, .unknown_type),
+            .invalid => try conn.fail(arena, effects, envelope.id, .protocol_error),
+            .signal => |signal| {
+                if (!allowedFromClient(signal, envelope)) return conn.fail(arena, effects, envelope.id, .protocol_error);
+                try effects.append(arena, .{ .signal = .{ .id = envelope.id, .re = envelope.re, .signal = signal } });
+            },
+        }
+    }
+
+    fn allowedFromClient(signal: protocol.Signal, envelope: protocol.Envelope) bool {
+        return switch (signal) {
+            .offer => |offer| offer.pc == .publish and envelope.id != null,
+            .answer => |answer| answer.pc == .subscribe and envelope.re != null,
+            .candidate => true,
+        };
     }
 
     fn fail(conn: *Connection, arena: std.mem.Allocator, effects: *Effects, re: ?[]const u8, code: protocol.ErrorCode) !void {
