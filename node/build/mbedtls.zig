@@ -1,0 +1,150 @@
+const std = @import("std");
+
+pub const config_header = "bairdwire_mbedtls_config.h";
+
+pub fn configure(b: *std.Build, module: *std.Build.Module, upstream: *std.Build.Dependency) void {
+    module.addIncludePath(upstream.path("include"));
+    module.addIncludePath(b.path("build/mbedtls"));
+    module.addCMacro("MBEDTLS_USER_CONFIG_FILE", "\"" ++ config_header ++ "\"");
+}
+
+pub fn link(module: *std.Build.Module, lib: *std.Build.Step.Compile) void {
+    module.linkLibrary(lib);
+    module.addCMacro("MBEDTLS_USER_CONFIG_FILE", "\"" ++ config_header ++ "\"");
+}
+
+pub fn build(
+    b: *std.Build,
+    target: std.Build.ResolvedTarget,
+    optimize: std.lang.Optimize,
+) *std.Build.Step.Compile {
+    const upstream = b.dependency("mbedtls", .{});
+    const module = b.createModule(.{
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    configure(b, module, upstream);
+    module.addIncludePath(upstream.path("library"));
+    module.addCSourceFiles(.{
+        .root = upstream.path("library"),
+        .files = &sources,
+        .flags = &.{"-std=c99"},
+    });
+
+    const lib = b.addLibrary(.{ .name = "mbedtls", .root_module = module });
+    lib.installHeadersDirectory(upstream.path("include"), "", .{});
+    lib.installHeader(b.path("build/mbedtls/" ++ config_header), config_header);
+    return lib;
+}
+
+const sources = [_][]const u8{
+    "aes.c",
+    "aesce.c",
+    "aesni.c",
+    "aria.c",
+    "asn1parse.c",
+    "asn1write.c",
+    "base64.c",
+    "bignum.c",
+    "bignum_core.c",
+    "bignum_mod.c",
+    "bignum_mod_raw.c",
+    "block_cipher.c",
+    "camellia.c",
+    "ccm.c",
+    "chacha20.c",
+    "chachapoly.c",
+    "cipher.c",
+    "cipher_wrap.c",
+    "cmac.c",
+    "constant_time.c",
+    "ctr_drbg.c",
+    "debug.c",
+    "des.c",
+    "dhm.c",
+    "ecdh.c",
+    "ecdsa.c",
+    "ecjpake.c",
+    "ecp.c",
+    "ecp_curves.c",
+    "entropy.c",
+    "entropy_poll.c",
+    "error.c",
+    "gcm.c",
+    "hkdf.c",
+    "hmac_drbg.c",
+    "lmots.c",
+    "lms.c",
+    "md5.c",
+    "md.c",
+    "memory_buffer_alloc.c",
+    "mps_reader.c",
+    "mps_trace.c",
+    "net_sockets.c",
+    "nist_kw.c",
+    "oid.c",
+    "padlock.c",
+    "pem.c",
+    "pk.c",
+    "pkcs12.c",
+    "pkcs5.c",
+    "pkcs7.c",
+    "pk_ecc.c",
+    "pkparse.c",
+    "pk_wrap.c",
+    "pkwrite.c",
+    "platform.c",
+    "platform_util.c",
+    "poly1305.c",
+    "psa_crypto_aead.c",
+    "psa_crypto.c",
+    "psa_crypto_cipher.c",
+    "psa_crypto_client.c",
+    "psa_crypto_driver_wrappers_no_static.c",
+    "psa_crypto_ecp.c",
+    "psa_crypto_ffdh.c",
+    "psa_crypto_hash.c",
+    "psa_crypto_mac.c",
+    "psa_crypto_pake.c",
+    "psa_crypto_random.c",
+    "psa_crypto_rsa.c",
+    "psa_crypto_se.c",
+    "psa_crypto_slot_management.c",
+    "psa_crypto_storage.c",
+    "psa_its_file.c",
+    "psa_util.c",
+    "ripemd160.c",
+    "rsa_alt_helpers.c",
+    "rsa.c",
+    "sha1.c",
+    "sha256.c",
+    "sha3.c",
+    "sha512.c",
+    "ssl_cache.c",
+    "ssl_ciphersuites.c",
+    "ssl_client.c",
+    "ssl_cookie.c",
+    "ssl_debug_helpers_generated.c",
+    "ssl_msg.c",
+    "ssl_ticket.c",
+    "ssl_tls12_client.c",
+    "ssl_tls12_server.c",
+    "ssl_tls13_client.c",
+    "ssl_tls13_generic.c",
+    "ssl_tls13_keys.c",
+    "ssl_tls13_server.c",
+    "ssl_tls.c",
+    "threading.c",
+    "timing.c",
+    "version.c",
+    "version_features.c",
+    "x509.c",
+    "x509_create.c",
+    "x509_crl.c",
+    "x509_crt.c",
+    "x509_csr.c",
+    "x509write.c",
+    "x509write_crt.c",
+    "x509write_csr.c",
+};

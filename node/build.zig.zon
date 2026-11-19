@@ -1,0 +1,38 @@
+.{
+    .name = .bairdwire,
+    .version = "0.1.0",
+    .fingerprint = 0x2d948ff1cdd10164,
+    .minimum_zig_version = "0.17.1",
+    .dependencies = .{
+        .mbedtls = .{
+            .url = "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/mbedtls-3.6.8.tar.gz",
+            .hash = "N-V-__8AAJiVmgK8m52FlgB-3nQfNv4JiOPOA4rdnbtfFuq8",
+        },
+        .libjuice = .{
+            .url = "https://github.com/paullouisageneau/libjuice/archive/b89c792e3612faf2f12cf35bcc56857313a06be3.tar.gz",
+            .hash = "N-V-__8AAB1oCADtUFeRxdCYQdecv0OSYjlKIfD-86Bh5JuF",
+        },
+        .libsrtp = .{
+            .url = "https://github.com/cisco/libsrtp/archive/24b3bf8f19b6f5ab4cd2bcceb4f4064efca86fd5.tar.gz",
+            .hash = "N-V-__8AAGyiJwCjla9gs0OUHKaxMFn3Snt_MSktRorGOX-L",
+        },
+        .usrsctp = .{
+            .url = "https://github.com/paullouisageneau/usrsctp/archive/fec583d54493f879d2ae44a743423bf8a04371ab.tar.gz",
+            .hash = "N-V-__8AALAGWACeA2U3iSwHwHdWNrq6RB1I8N80fRDQYjrw",
+        },
+        .plog = .{
+            .url = "https://github.com/SergiusTheBest/plog/archive/94899e0b926ac1b0f4750bfbd495167b4a6ae9ef.tar.gz",
+            .hash = "N-V-__8AAHtdDQDis4xbVP81BKAWxzs139lkmIgHT9HpIdfP",
+        },
+        .libdatachannel = .{
+            .url = "https://github.com/paullouisageneau/libdatachannel/archive/refs/tags/v0.24.6.tar.gz",
+            .hash = "N-V-__8AAH7wNwObI9EjtWHx-gKAmR5w9n6GoPvQFTAtlm1v",
+        },
+    },
+    .paths = .{
+        "build",
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
