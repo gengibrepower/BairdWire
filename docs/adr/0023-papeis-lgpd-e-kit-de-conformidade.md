@@ -2,6 +2,7 @@
 
 **Status:** aceito
 **Data:** 2026-11-18
+**Vigência:** os papéis e o termo *host* valem já; o kit K1 a K7 entra a partir da fase 2 e é auditado no M5 (ADR 0013)
 
 > Mapeamento técnico, não parecer jurídico. Os pontos marcados como "provavelmente" precisam de confirmação jurídica antes de virarem promessa pública.
 
