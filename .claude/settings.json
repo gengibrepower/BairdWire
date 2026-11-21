@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git -C * push *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr merge *)",
+      "Bash(git reset --hard *)"
+    ],
+    "blockWritesOutsideWorkingDirectories": true
+  }
+}
