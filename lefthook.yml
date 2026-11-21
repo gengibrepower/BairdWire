@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: zig fmt
+      root: node/
+      glob: "*.zig"
+      run: zig fmt --check {staged_files}
+    - name: biome
+      root: client/
+      glob: "*.{ts,js,svelte,json,css}"
+      run: ./node_modules/.bin/biome check --no-errors-on-unmatched {staged_files}
