@@ -316,3 +316,61 @@ test "PeerConnection que falha encerra a chamada e permite uma nova oferta" {
     const again = try h.text(publish_offer);
     try testing.expectEqual(@as(node_mod.PcId, 3), again[0].rtc_create.pc);
 }
+
+const Call = struct { conn: node_mod.ConnId, publish: node_mod.PcId, subscribe: node_mod.PcId, ssrc: u32 };
+
+fn runOn(node: *node_mod.Node, arena: *std.heap.ArenaAllocator, event: node_mod.Event) ![]const node_mod.Effect {
+    _ = arena.reset(.retain_capacity);
+    var effects: node_mod.Effects = .empty;
+    try node.handle(arena.allocator(), event, &effects);
+    return effects.items;
+}
+
+fn startCall(node: *node_mod.Node, arena: *std.heap.ArenaAllocator, id: node_mod.ConnId) !Call {
+    _ = try runOn(node, arena, .{ .opened = .{ .id = id, .now = 0 } });
+    _ = try runOn(node, arena, .{ .text = .{ .id = id, .payload =
+        \\{"v":1,"t":"session.hello","id":"h","d":{"versions":[1]}}
+    } });
+    const publish = (try runOn(node, arena, .{ .text = .{ .id = id, .payload = publish_offer } }))[0].rtc_create.pc;
+    _ = try runOn(node, arena, .{ .rtc_description = .{ .pc = publish, .sdp = "v=0 resposta" } });
+
+    const created = (try runOn(node, arena, .{ .rtc_track = .{ .pc = publish, .track = source_track, .description = opus_track } }))[0].rtc_create;
+    const offer = (try runOn(node, arena, .{ .rtc_description = .{ .pc = created.pc, .sdp = "v=0 oferta do nó" } }))[0].send.payload;
+    const parsed = try std.json.parseFromSliceLeaky(std.json.Value, arena.allocator(), offer, .{});
+    const answer = try std.fmt.allocPrint(arena.allocator(),
+        \\{{"v":1,"t":"rtc.answer","re":"{s}","d":{{"pc":"subscribe","sdp":"v=0 resposta do cliente"}}}}
+    , .{parsed.object.get("id").?.string});
+    _ = try runOn(node, arena, .{ .text = .{ .id = id, .payload = answer } });
+
+    return .{ .conn = id, .publish = publish, .subscribe = created.pc, .ssrc = created.track.?.ssrc };
+}
+
+test "duas chamadas ao mesmo tempo não misturam o RTP" {
+    var arena: std.heap.ArenaAllocator = .init(testing.allocator);
+    defer arena.deinit();
+    var node: node_mod.Node = .init(testing.allocator, "0.1.0-dev", 42);
+    defer node.deinit();
+
+    const a = try startCall(&node, &arena, 1);
+    const b = try startCall(&node, &arena, 2);
+
+    for ([_]Call{ a, b }) |call| {
+        const packet = rtpPacket(111, 0xaabbccdd);
+        const effects = try runOn(&node, &arena, .{ .rtc_media = .{ .pc = call.publish, .track = source_track, .packet = &packet } });
+        try testing.expectEqual(@as(usize, 1), effects.len);
+        try testing.expectEqual(call.subscribe, effects[0].rtc_send.pc);
+        try testing.expectEqual(call.ssrc, rtp.ssrcOf(effects[0].rtc_send.packet));
+    }
+}
+
+test "a mesma seed gera os mesmos SSRCs" {
+    var arena: std.heap.ArenaAllocator = .init(testing.allocator);
+    defer arena.deinit();
+
+    var first: node_mod.Node = .init(testing.allocator, "0.1.0-dev", 7);
+    defer first.deinit();
+    var second: node_mod.Node = .init(testing.allocator, "0.1.0-dev", 7);
+    defer second.deinit();
+
+    try testing.expectEqual((try startCall(&first, &arena, 1)).ssrc, (try startCall(&second, &arena, 1)).ssrc);
+}
