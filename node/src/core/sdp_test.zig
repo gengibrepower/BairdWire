@@ -10,3 +10,11 @@ test "opusPayloadType lê o rtpmap do Opus" {
     try testing.expectEqual(@as(?u8, null), sdp.opusPayloadType("a=rtpmap:96 opus/16000\r\n"));
     try testing.expectEqual(@as(?u8, null), sdp.opusPayloadType(""));
 }
+
+test "opusPayloadType fica com o primeiro rtpmap de Opus" {
+    try testing.expectEqual(@as(?u8, 111), sdp.opusPayloadType("a=rtpmap:111 opus/48000/2\r\na=rtpmap:96 opus/48000/2\r\n"));
+}
+
+test "opusPayloadType ignora rtpmap sem espaço entre o número e a codificação" {
+    try testing.expectEqual(@as(?u8, null), sdp.opusPayloadType("a=rtpmap:111opus/48000/2\r\n"));
+}
