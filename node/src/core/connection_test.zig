@@ -272,3 +272,12 @@ test "conexão fechada ignora qualquer evento" {
     try testing.expectEqual(@as(usize, 0), (try h.run(.binary)).len);
     try testing.expectEqual(@as(usize, 0), (try h.run(.{ .tick = opened_at + 10_000 })).len);
 }
+
+test "mensagem de exatamente 4 KiB antes do hello não é grande demais" {
+    var h: Harness = .init();
+    defer h.deinit();
+
+    const payload = try h.arena.allocator().alloc(u8, protocol.max_message_before_hello);
+    @memset(payload, ' ');
+    try expectError(try h.run(.{ .text = payload }), null, .protocol_error);
+}
