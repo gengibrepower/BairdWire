@@ -2,5 +2,7 @@
 idiomatic_version_file_enable_tools = ["zig"]
 
 [tools]
+# o ZLS acompanha a versão menor do Zig (.zig-version); não há ZLS de patch
+zls = "0.17.0"
 node = "24.19.0"
 pnpm = "11.9.0"
