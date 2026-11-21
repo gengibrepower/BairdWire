@@ -47,7 +47,7 @@ Noturno: camadas 2, 3 e 6 estendidas. Semanal ou manual: camada 7.
 
 **Dependências:** Renovate com espera mínima de 7 dias. Dependências Zig atualizadas à mão (ADR 0028).
 
-**Guardrails do assistente:** pedir permissão antes de cada commit, com um resumo. Nunca fazer push. Nunca abrir PR.
+~~**Guardrails do assistente:** pedir permissão antes de cada commit, com um resumo. Nunca fazer push. Nunca abrir PR.~~ Revisado pelo [ADR 0039](0039-guardrails-do-assistente.md).
 
 ## Consequências
 

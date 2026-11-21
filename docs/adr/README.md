@@ -40,3 +40,4 @@
 | [0036](0036-cla-fora-dos-requisitos-do-primeiro-video.md) | CLA Assistant fora dos requisitos do primeiro vídeo |
 | [0037](0037-nome-definitivo.md) | Nome definitivo: BairdWire |
 | [0038](0038-rede-do-container-do-no.md) | Rede do container do nó no v0.1 |
+| [0039](0039-guardrails-do-assistente.md) | Guardrails do assistente: commits livres na branch, push e PR bloqueados |
