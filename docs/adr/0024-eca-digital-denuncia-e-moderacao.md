@@ -2,6 +2,7 @@
 
 **Status:** aceito
 **Data:** 2026-11-18
+**Vigência:** a partir da fase 2 (ADR 0013)
 
 > Mapeamento técnico, não parecer jurídico. A incerteza é alta, porque a lei é recente.
 

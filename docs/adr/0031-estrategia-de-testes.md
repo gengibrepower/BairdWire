@@ -25,6 +25,8 @@ O núcleo do nó é sans-IO (ADR 0029), o que permite simulação determinístic
 | 7 | Rede e carga: 10 navegadores, `tc netem`, metas do ADR 0005, latência por vídeo com contador | Playwright + Docker + `netem` | Semanal e antes de cada marco |
 | 8 | Soak de 7 dias com bots, monitorando memória e descritores | Playwright + métricas do nó | Antes do M5 |
 
+Quando cada camada entra: revisado pelo [ADR 0041](0041-ativacao-das-camadas-de-teste.md).
+
 - Todos os testes Zig usam `std.testing.allocator`, que falha se houver vazamento.
 - **Todo bug corrigido ganha um teste de regressão** na camada mais barata que o reproduza.
 - "Várias instâncias" no v0.1 significa vários clientes contra um nó. Simulação com N nós fica para a federação.
