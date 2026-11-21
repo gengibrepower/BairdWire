@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "zig-docs": {
+      "command": "mise",
+      "args": ["exec", "--", "npx", "-y", "zig-mcp@1.4.1", "--doc-source", "local"]
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
