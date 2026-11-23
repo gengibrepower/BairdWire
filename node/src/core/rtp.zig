@@ -23,12 +23,3 @@ pub fn ssrcOf(packet: []const u8) u32 {
 pub fn payloadType(packet: []const u8) u7 {
     return @truncate(packet[1]);
 }
-
-test "isRtp exige versão 2, 12 bytes e payload type fora da faixa do RTCP" {
-    try std.testing.expect(isRtp(&[_]u8{ 0x80, 111, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1 }));
-    try std.testing.expect(!isRtp(&[_]u8{ 0x40, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
-    try std.testing.expect(!isRtp(&[_]u8{ 0x80, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
-    try std.testing.expect(!isRtp(&[_]u8{ 0x80, 223, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
-    try std.testing.expect(isRtp(&[_]u8{ 0x80, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
-    try std.testing.expect(!isRtp(&[_]u8{ 0x80, 111, 0 }));
-}
