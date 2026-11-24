@@ -50,5 +50,5 @@ pub fn main(init: std.process.Init) !void {
 test {
     _ = @import("runtime_test.zig");
     _ = @import("adapters/webrtc.zig");
-    _ = @import("adapters/webrtc_test.zig"); // novo
+    _ = @import("adapters/webrtc_test.zig");
 }
