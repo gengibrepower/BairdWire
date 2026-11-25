@@ -150,8 +150,21 @@ jobs:
         with:
           persist-credentials: false
       - run: echo BAIRDWIRE_DOMAIN=localhost > .env
-      - run: docker compose build
-      - run: docker compose up -d
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/bake-action@59cb1203cd42bcefd40a1b6d73b589e48c86040e # v7.5.0
+        with:
+          source: deploy
+          files: docker-compose.yml
+          load: true
+          set: |
+            node.cache-from=type=gha,scope=compose-node
+            node.cache-to=type=gha,mode=max,scope=compose-node
+            caddy.cache-from=type=gha,scope=compose-caddy
+            caddy.cache-to=type=gha,mode=max,scope=compose-caddy
+        env:
+          BAIRDWIRE_DOMAIN: localhost
+          DOCKER_BUILD_RECORD_UPLOAD: false
+      - run: docker compose up -d --no-build
       - run: ./smoke.sh localhost
       - if: failure()
         run: docker compose logs --no-color
