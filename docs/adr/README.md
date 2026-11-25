@@ -43,3 +43,4 @@
 | [0039](0039-guardrails-do-assistente.md) | Guardrails do assistente: commits livres na branch, push e PR bloqueados |
 | [0040](0040-quem-escreve-o-que.md) | Quem escreve o quê |
 | [0041](0041-ativacao-das-camadas-de-teste.md) | Ativação das camadas de teste por fase |
+| [0042](0042-dominio-por-area.md) | Domínio por área |

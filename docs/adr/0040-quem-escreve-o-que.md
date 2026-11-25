@@ -17,23 +17,25 @@ Ao mesmo tempo, build, deploy, CI e cliente são trabalho necessário que não s
 
 ## Decisão
 
-**O autor escreve:**
-- `node/src/core/`;
-- `node/src/runtime.zig`;
-- `node/src/adapters/`, onde o Zig conversa com as bibliotecas em C (callbacks, threads e filas);
-- `node/src/main.zig`.
+~~**O autor escreve:**~~
+- ~~`node/src/core/`;~~
+- ~~`node/src/runtime.zig`;~~
+- ~~`node/src/adapters/`, onde o Zig conversa com as bibliotecas em C (callbacks, threads e filas);~~
+- ~~`node/src/main.zig`.~~
 
-Nessas áreas, o assistente explica, revisa e escreve testes (`*_test.zig`), mas **não escreve a implementação**.
+~~Nessas áreas, o assistente explica, revisa e escreve testes (`*_test.zig`), mas **não escreve a implementação**.~~
 
-**O assistente fica livre** em:
-- `node/build/` e no `build.zig`, incluindo o build das bibliotecas nativas;
-- `deploy/` e `.github/`;
-- `client/`;
-- testes de integração em TypeScript.
+~~**O assistente fica livre** em:~~
+- ~~`node/build/` e no `build.zig`, incluindo o build das bibliotecas nativas;~~
+- ~~`deploy/` e `.github/`;~~
+- ~~`client/`;~~
+- ~~testes de integração em TypeScript.~~
+
+Revisado pelo [ADR 0042](0042-dominio-por-area.md): as áreas passam a ter estados, em `docs/dominio.json`, e a divisão acima vira o estado inicial.
 
 **Contrato:** mudanças em `docs/protocolo.md` passam pelo autor antes. O assistente implementa a partir do contrato, mas não muda o contrato sozinho.
 
-**Bloqueio:** a escrita do assistente nas áreas do autor fica bloqueada por configuração versionada no repositório, com exceção dos arquivos de teste.
+~~**Bloqueio:** a escrita do assistente nas áreas do autor fica bloqueada por configuração versionada no repositório, com exceção dos arquivos de teste.~~ Revisado pelo [ADR 0042](0042-dominio-por-area.md): o bloqueio passa a ler `docs/dominio.json`.
 
 ## Consequências
 
