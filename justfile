@@ -16,7 +16,11 @@ test:
     {{cliente}} test
 
 # o mesmo que a CI roda (ci.yml), na mesma ordem
-check: check-no check-cliente check-deploy
+check: check-hooks check-no check-cliente check-deploy
+
+# testes do hook que lê o docs/dominio.json (ADR 0042)
+check-hooks:
+    node --test .claude/hooks/dominio.test.mjs
 
 check-no:
     cd node && zig fmt --check build.zig build src
