@@ -66,6 +66,7 @@ jobs:
       fail-fast: false
       matrix:
         target: [native, x86_64-linux-musl]
+        mode: [debug, release]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -79,10 +80,9 @@ jobs:
             node/zig-pkg
             node/.zig-cache
             ~/.cache/zig
-          key: zig-${{ runner.os }}-${{ matrix.target }}-${{ hashFiles('.zig-version', 'node/build.zig.zon', 'node/build.zig', 'node/build/**') }}
-          restore-keys: zig-${{ runner.os }}-${{ matrix.target }}-
-      - run: zig build test -Dtarget=${{ matrix.target }} --summary all
-      - run: zig build test -Dtarget=${{ matrix.target }} -Drelease --summary all
+          key: zig-${{ runner.os }}-${{ matrix.target }}-${{ matrix.mode }}-${{ hashFiles('.zig-version', 'node/build.zig.zon', 'node/build.zig', 'node/build/**') }}
+          restore-keys: zig-${{ runner.os }}-${{ matrix.target }}-${{ matrix.mode }}-
+      - run: zig build test -Dtarget=${{ matrix.target }} ${{ matrix.mode == 'release' && '-Drelease' || '' }} --summary all
 
   release:
     needs: changes
