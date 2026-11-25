@@ -11,7 +11,10 @@ const mudados = [
 ].filter(Boolean);
 
 // mesmos gatilhos do ci.yml (.github/scripts/changed.sh)
-const mexeuNoNo = mudados.some((f) => /^(node\/|\.zig-version$|mise\.toml$)/.test(f));
+// a reescrita do autor fica vermelha de propósito e o assistente não pode corrigi-la (ADR 0040)
+const areaDoAutor = (f) =>
+  /^node\/src\/(core\/|adapters\/|runtime\.zig$|main\.zig$)/.test(f) && !f.endsWith("_test.zig");
+const mexeuNoNo = mudados.some((f) => /^(node\/|\.zig-version$|mise\.toml$)/.test(f) && !areaDoAutor(f));
 const mexeuNoCliente = mudados.some((f) => /^(client\/|deploy\/Caddyfile$|pnpm-|mise\.toml$)/.test(f));
 
 const falhas = [];

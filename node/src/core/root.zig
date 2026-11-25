@@ -11,7 +11,7 @@ test {
     _ = @import("connection_test.zig");
     _ = @import("node_test.zig");
     _ = @import("rtc_test.zig");
-    _ = @import("protocol_test.zig"); // novo
-    _ = @import("rtp_test.zig"); // novo
-    _ = @import("sdp_test.zig"); // novo
+    _ = @import("protocol_test.zig");
+    _ = @import("rtp_test.zig");
+    _ = @import("sdp_test.zig");
 }
