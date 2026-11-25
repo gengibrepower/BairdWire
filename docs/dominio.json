@@ -1,0 +1,15 @@
+[
+  { "caminho": "node/src/core/", "estado": "aprendendo", "adr": "0042" },
+  { "caminho": "node/src/runtime.zig", "estado": "aprendendo", "adr": "0042" },
+  { "caminho": "node/src/adapters/", "estado": "aprendendo", "adr": "0042" },
+  { "caminho": "node/src/main.zig", "estado": "aprendendo", "adr": "0042" },
+  { "caminho": "node/build.zig", "estado": "divida", "adr": "0042" },
+  { "caminho": "node/build.zig.zon", "estado": "divida", "adr": "0042" },
+  { "caminho": "node/build/", "estado": "divida", "adr": "0042" },
+  { "caminho": "client/", "estado": "fora-do-objetivo", "adr": "0042" },
+  { "caminho": "deploy/", "estado": "fora-do-objetivo", "adr": "0042" },
+  { "caminho": ".github/", "estado": "fora-do-objetivo", "adr": "0042" },
+  { "caminho": ".claude/", "estado": "fora-do-objetivo", "adr": "0042" },
+  { "caminho": ".agents/", "estado": "fora-do-objetivo", "adr": "0042" },
+  { "caminho": "AGENTS.md", "estado": "fora-do-objetivo", "adr": "0042" }
+]
