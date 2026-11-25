@@ -11,6 +11,7 @@ Responda sempre em **português do Brasil**.
 - `docs/perguntas-abertas.md`: o que ainda não foi decidido e quando precisa ser decidido. Ao resolver uma pergunta, marque como resolvida e aponte o ADR.
 - `docs/protocolo.md`: a especificação do protocolo (fonte da verdade). Mantenha em sincronia com os tipos em Zig e em TS.
 - `docs/migracoes-zig.md`: o registro de cada migração de versão do Zig.
+- `docs/dominio.json`: o estado de cada área (quem escreve o quê). `docs/dominio.md` explica os estados, e `docs/dividas.md` lista o que o autor ainda deve aprender.
 
 ## Escopo do v0.1, em uma linha
 
@@ -51,10 +52,10 @@ Cada camada entra numa fase (ADR 0041). A CI de cada PR roda as que já existem:
 
 - Branch (`feat/`, `fix/`, `docs/`, `chore/`, `zig-0.N`) → PR → CI verde → squash merge. Histórico linear. Conventional Commits.
 - **Commits atômicos:** o menor possível, uma mudança por commit, e cada um compilando e passando nos testes, para facilitar o rollback e o `git bisect`.
-- **Dentro da branch, os commits são livres.** Só os **importantes** pedem permissão, com um resumo antes: ADRs, regras deste arquivo, dependências e mudanças em `docs/protocolo.md` (ADR 0039).
+- **Dentro da branch, os commits são livres.** Só os **importantes** pedem permissão, com um resumo antes: ADRs, regras deste arquivo, dependências e mudanças em `docs/protocolo.md` (ADR 0039) e em `docs/dominio.json` (ADR 0042).
 - **Sem trailer de co-autoria e sem `Signed-off-by`.** O projeto vai usar um CLA quando abrir as contribuições externas (ADRs 0026 e 0036).
 - **Nunca** fazer push. **Nunca** abrir PR. Push, PR e merge são do autor.
-- O bloqueio de push, PR e `git reset --hard` está em `.claude/settings.json`. Os hooks em `.claude/hooks/` bloqueiam a implementação nas áreas do autor, formatam o que foi editado e rodam os testes da parte que mudou antes de encerrar uma tarefa. Se um hook bloquear, corrija a causa; não contorne o hook.
+- O bloqueio de push, PR e `git reset --hard` está em `.claude/settings.json`. Os hooks em `.claude/hooks/` bloqueiam a implementação nas áreas `aprendendo` e `em-prova`, formatam o que foi editado e rodam os testes da parte que mudou antes de encerrar uma tarefa. Se um hook bloquear, corrija a causa; não contorne o hook.
 
 ## Como atuar
 
@@ -65,15 +66,17 @@ Cada camada entra numa fase (ADR 0041). A CI de cada PR roda as que já existem:
 
 ## Quem escreve o quê
 
-Ver o ADR 0040.
+O assistente só escreve o que o autor já saberia escrever (ADR 0042, que revisa o 0040). Cada área tem um estado, e **o estado de cada caminho está no `docs/dominio.json`**: vence a entrada mais específica, e um caminho em `node/src/` sem entrada conta como `aprendendo`. Os estados, a promoção e o rebaixamento estão no `docs/dominio.md`. As dívidas estão no `docs/dividas.md`.
 
-- **O autor escreve** `node/src/core/`, `node/src/runtime.zig`, `node/src/adapters/` e `node/src/main.zig`. Nessas áreas, explique, revise e escreva testes (`*_test.zig`), mas **não escreva a implementação**, nem quando o autor pedir só um trecho. Mostre o caminho e deixe o autor escrever.
-- **Livre:** `node/build/`, `build.zig`, `deploy/`, `.github/`, `client/` e os testes de integração em TypeScript.
+- **`aprendendo`:** explique, dê dicas, revise e escreva testes (`*_test.zig`), mas **não escreva a implementação**, nem quando o autor pedir só um trecho. Mostre o caminho e deixe o autor escrever.
+- **`em-prova`:** o autor escreve do arquivo vazio, sem a referência. **Não dê dicas de design nem mostre código**, nem quando ele pedir. Só aponte erros de API depois de o autor terminar.
+- **`delegada`, `divida` e `fora-do-objetivo`:** o assistente escreve. Em `delegada`, o autor revisa linha por linha.
+- Promover ou rebaixar uma área exige um ADR curto junto com a mudança no `docs/dominio.json`. Nunca mude um estado sem esse ADR.
 - **Contrato:** mudanças em `docs/protocolo.md` passam pelo autor antes. Implemente a partir do contrato, sem mudá-lo sozinho.
 
 ## Plano antes do código
 
-Para tarefas grandes (mais de um commit, ou qualquer coisa que toque o protocolo ou uma área do autor), escreva primeiro um plano com os requisitos, os ADRs envolvidos, os passos e as perguntas de decisão, e espere a revisão do autor antes de implementar. O plano fica fora do repositório, numa nota do vault do autor.
+Para tarefas grandes (mais de um commit, ou qualquer coisa que toque o protocolo ou uma área `aprendendo` ou `em-prova`), escreva primeiro um plano com os requisitos, os ADRs envolvidos, os passos e as perguntas de decisão, e espere a revisão do autor antes de implementar. O plano fica fora do repositório, numa nota do vault do autor.
 
 ## Ferramentas do assistente
 
