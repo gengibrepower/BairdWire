@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { decidir, lerRegras } from "./dominio.mjs";
 import { entrada, raiz } from "./entrada.mjs";
 
 if (entrada.stop_hook_active) process.exit(0);
@@ -11,10 +12,11 @@ const mudados = [
 ].filter(Boolean);
 
 // mesmos gatilhos do ci.yml (.github/scripts/changed.sh)
-// a reescrita do autor fica vermelha de propósito e o assistente não pode corrigi-la (ADR 0040)
-const areaDoAutor = (f) =>
-  /^node\/src\/(core\/|adapters\/|runtime\.zig$|main\.zig$)/.test(f) && !f.endsWith("_test.zig");
+// a reescrita do autor fica vermelha de propósito e o assistente não pode corrigi-la (ADR 0042)
+const regras = lerRegras(raiz);
+const areaDoAutor = (f) => !decidir(f, regras).permitir;
 const mexeuNoNo = mudados.some((f) => /^(node\/|\.zig-version$|mise\.toml$)/.test(f) && !areaDoAutor(f));
+const mexeuNosHooks = mudados.some((f) => /^(\.claude\/hooks\/|docs\/dominio\.json$)/.test(f));
 const mexeuNoCliente = mudados.some((f) => /^(client\/|deploy\/Caddyfile$|pnpm-|mise\.toml$)/.test(f));
 
 const falhas = [];
@@ -28,6 +30,7 @@ const rodar = (nome, cmd, args, cwd) => {
 };
 
 if (mexeuNoNo) rodar("zig build test", "mise", ["exec", "--", "zig", "build", "test"], `${raiz}/node`);
+if (mexeuNosHooks) rodar("testes do hook", "node", ["--test", ".claude/hooks/dominio.test.mjs"], raiz);
 if (mexeuNoCliente) {
   rodar("vitest", "pnpm", ["--filter", "@bairdwire/client", "exec", "vitest", "run"], raiz);
   rodar("svelte-check", "pnpm", ["--filter", "@bairdwire/client", "run", "check"], raiz);
