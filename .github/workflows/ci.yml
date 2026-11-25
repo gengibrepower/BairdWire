@@ -77,8 +77,9 @@ jobs:
         with:
           path: |
             node/zig-pkg
+            node/.zig-cache
             ~/.cache/zig
-          key: zig-${{ runner.os }}-${{ matrix.target }}-${{ hashFiles('.zig-version', 'node/build.zig.zon') }}
+          key: zig-${{ runner.os }}-${{ matrix.target }}-${{ hashFiles('.zig-version', 'node/build.zig.zon', 'node/build.zig', 'node/build/**') }}
           restore-keys: zig-${{ runner.os }}-${{ matrix.target }}-
       - run: zig build test -Dtarget=${{ matrix.target }} --summary all
       - run: zig build test -Dtarget=${{ matrix.target }} -Drelease --summary all
@@ -105,8 +106,9 @@ jobs:
         with:
           path: |
             node/zig-pkg
+            node/.zig-cache
             ~/.cache/zig
-          key: zig-${{ runner.os }}-release-${{ matrix.target }}-${{ hashFiles('.zig-version', 'node/build.zig.zon') }}
+          key: zig-${{ runner.os }}-release-${{ matrix.target }}-${{ hashFiles('.zig-version', 'node/build.zig.zon', 'node/build.zig', 'node/build/**') }}
           restore-keys: zig-${{ runner.os }}-release-${{ matrix.target }}-
       - run: zig build -Dtarget=${{ matrix.target }} -Drelease
 
