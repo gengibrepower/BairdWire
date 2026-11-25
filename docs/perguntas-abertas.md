@@ -21,3 +21,20 @@ O que ficou para decidir depois e em que momento precisa ser decidido.
 | P15 | Supressão de ruído melhor que a do navegador, com um modelo como RNNoise ou DeepFilterNet em WebAssembly num `AudioWorklet`, opcional por pessoa | Depois do v0.1 | ADR 0003 (no v0.1 vale a supressão do navegador). Roda no cliente antes de codificar, então não afeta o SFU nem o E2EE (ADR 0022). O WASM exige `'wasm-unsafe-eval'` no `script-src`, o que muda o CSP rígido e precisa de ADR. |
 | ~~P15~~ | ~~`http.zig` e `websocket.zig` mantêm suporte à versão estável fixada do Zig (branches ou tags por versão)?~~ | **Resolvida no ADR 0034**: o `master` acompanha a estável e há branches `zig-0.N`; fixar por commit | ADR 0029. |
 | ~~P16~~ | ~~Trazer a `libdatachannel` pelo gerenciador de pacotes do Zig: os tarballs de release incluem as dependências que ela puxa como submodules?~~ | **Resolvida no ADR 0034**: não incluem; cada submodule entra como dependência própria, com Mbed TLS para o DTLS | ADR 0032. |
+| P17 | Quando adotar o Antigravity CLI (`agy`, com o Gemini 4 Neon) como segundo assistente no repositório, e como garantir que ele siga as mesmas regras | Antes de o `agy` rodar neste repositório pela primeira vez. Recomendação: depois de o autor fazer pelo menos um ciclo completo de módulo, para o segundo revisor ter uma revisão do próprio autor com que comparar | ADR 0042. O `agy` não lê o `CLAUDE.md` nem o `.claude/`, então hoje ignoraria o ADR 0042 inteiro. A adoção exige um ADR novo de paridade de guardrails. Ver a [checklist da P17](#p17-checklist-de-portabilidade). |
+
+## P17: checklist de portabilidade
+
+Verificada em nov/2026. Confira de novo na documentação oficial do `agy` na época da adoção.
+
+- As regras vão para o `AGENTS.md`, que vira a fonte. O `CLAUDE.md` passa a ter `@AGENTS.md` mais o que for específico do Claude Code.
+- Os hooks vão para `.agents/hooks.json`. O `command` precisa de caminho absoluto.
+- No `agy`, exit 2 **não** bloqueia. Só a saída padrão decide, com `{"decision":"deny"|"allow"|"ask",...}`. Saída vazia libera, mas `{}` **bloqueia**.
+- Os nomes das ferramentas são diferentes (`run_command`, `view_file`; não existe `Edit`/`Bash`), e a entrada vem em camelCase (`toolCall.name`, `toolCall.args`). Instale primeiro um hook que só grava a entrada, para descobrir os nomes reais das ferramentas de escrita e o formato de `args`.
+- Reaproveite a lógica de decisão do hook da área do autor, separada da leitura da entrada do Claude Code, e o mesmo `docs/dominio.json`, com um adaptador fino para o formato do `agy`.
+- O bloqueio de push, PR e `reset --hard` vai para `permissions.deny` no `~/.gemini/antigravity-cli/settings.json`, que fica fora do repositório. Reforce com um hook versionado em `run_command`.
+- Nunca use `--dangerously-skip-permissions`: em versões testadas, ele pula os hooks de `PreToolUse`.
+- O formatador vai em `PostToolUse`, e os testes vão em `Stop`, com `{"decision":"continue"}` quando falharem.
+- O MCP `zig-docs` (e o `context7`) vai para o `mcp_config.json` do `agy`, senão o Neon usa a memória dele para a std do Zig 0.17.
+- O subagente `revisor` e o `/revisar` viram uma skill em `.agents/skills/revisar/SKILL.md`.
+- Teste o bloqueio de propósito: peça ao `agy` para editar `node/src/core/` e confirme que foi bloqueado.
