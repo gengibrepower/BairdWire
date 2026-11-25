@@ -13,7 +13,7 @@ RUN set -eu; \
       arm64) arch=aarch64; sum=a1546d5646eb184437918d6635ca6b762a0e889eac09cef720ee7a1ed3fe7795 ;; \
       *) echo "arquitetura de build sem suporte: $BUILDARCH" >&2; exit 1 ;; \
     esac; \
-    curl -fsSLo /tmp/zig.tar.xz "https://ziglang.org/download/0.17.1/zig-$arch-linux-0.17.1.tar.xz"; \
+    curl -fsSL --retry 5 --retry-all-errors -o /tmp/zig.tar.xz "https://ziglang.org/download/0.17.1/zig-$arch-linux-0.17.1.tar.xz"; \
     echo "$sum  /tmp/zig.tar.xz" | sha256sum -c -; \
     mkdir /opt/zig; \
     tar -xJf /tmp/zig.tar.xz -C /opt/zig --strip-components=1; \
@@ -24,7 +24,11 @@ FROM zig AS node-build
 ARG TARGETARCH
 WORKDIR /src
 COPY .zig-version ./
-COPY node/ node/
+# as dependências ficam numa camada própria, que só muda com o build
+COPY node/build.zig node/build.zig.zon node/
+COPY node/build/ node/build/
+RUN cd node && for tentativa in 1 2 3 4 5; do zig build --fetch && exit 0; sleep $((tentativa * 5)); done; exit 1
+COPY node/src/ node/src/
 RUN set -eu; \
     case "$TARGETARCH" in \
       amd64) target=x86_64-linux-musl ;; \
